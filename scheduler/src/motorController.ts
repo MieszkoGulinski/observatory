@@ -3,6 +3,7 @@ import { DelimiterParser } from "@serialport/parser-delimiter"; // TODO TypeScri
 import logger from "./logger.ts";
 
 const WATCHDOG_TIME_MS = 60000; // 1 minute
+const HEARTBEAT_INTERVAL_MS = 5000; // 5 seconds
 
 type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
 type SensorState = {
@@ -39,6 +40,11 @@ class MotorController {
     // Watchdog
     this.resetWatchdog();
 
+    // Heartbeat to microcontroller
+    setInterval(() => {
+      this.sendCommand("H");
+    }, HEARTBEAT_INTERVAL_MS);
+
     // Start listening
     const parser = this.serialPort.pipe(
       new DelimiterParser({ delimiter: "\n" }),
@@ -60,8 +66,8 @@ class MotorController {
     process.exit(1);
   }
 
-  async sendCommand(command: string) {
-    //
+  sendCommand(command: string) {
+    this.serialPort.write(command + "\n");
   }
 }
 
