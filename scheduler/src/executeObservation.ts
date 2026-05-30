@@ -5,6 +5,7 @@ import logger from "./logger.ts";
 
 export default async function executeObservation(id: number) {
   try {
+    logger.info("Starting task %d", id);
     // Mark task as running
     db.update(observationsSchedule)
       .set({ status: 1 }) // 1=running
@@ -20,6 +21,7 @@ export default async function executeObservation(id: number) {
         // TODO add file name
       })
       .where(eq(observationsSchedule.id, id));
+    logger.info("Completed task %d", id);
   } catch (error) {
     logger.error(error, "Fatal error executing observation");
     // Mark task as failed

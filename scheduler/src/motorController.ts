@@ -1,5 +1,5 @@
 import { SerialPort } from "serialport";
-import { DelimiterParser } from "@serialport/parser-delimiter";
+import { DelimiterParser } from "@serialport/parser-delimiter"; // TODO TypeScript does not recognize types here
 import logger from "./logger.ts";
 
 const WATCHDOG_TIME_MS = 60000; // 1 minute
@@ -19,7 +19,7 @@ type SensorState = {
 class MotorController {
   serialPort: SerialPort;
   timeout?: NodeJS.Timeout;
-  lastSensorState: SensorState | null;
+  lastSensorState: SensorState | null = null;
 
   constructor(path: string, baudRate: number) {
     logger.info("Attempting to open serial port %s", path);

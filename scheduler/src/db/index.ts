@@ -4,14 +4,29 @@ import config from "../config.ts";
 import { backup, DatabaseSync } from "node:sqlite";
 import logger from "../logger.ts";
 
-const dbPath = path.join(config.filesPath, "observatory.db");
+const dbPath = path.join(config.filesPath, "observatory.sqlite");
 const sqliteConn = new DatabaseSync(dbPath);
 const db = drizzle({ client: sqliteConn });
 
 export async function createBackup() {
-  const backupPath = path.join(config.filesPath, "observatory_backup.db");
+  const backupPath = path.join(config.filesPath, "observatory_backup.sqlite");
   logger.info("Creating database backup");
   await backup(sqliteConn, backupPath);
 }
+
+// TODO this is ugly, use some built-in Drizzle tool
+export const setupTables = () => {
+  sqliteConn.exec(`CREATE TABLE IF NOT EXISTS observations_schedule (
+    id INTEGER PRIMARY KEY,
+    status INTEGER NOT NULL, -- 0=scheduled, 1=running, 2=completed, 3=failed
+    startDate INTEGER NOT NULL, -- UNIX timestamp in ms
+    endDate INTEGER, -- UNIX timestamp in ms, filled when the task is fully completed
+    ra REAL NOT NULL, -- Right Ascension, decimal degrees
+    dec REAL NOT NULL, -- Declination, decimal degrees
+    expTimeMs INTEGER NOT NULL, -- exposure time in milliseconds
+    expIso INTEGER NOT NULL, -- exposure ISO
+    fileName TEXT -- filled after file is created
+  )`);
+};
 
 export default db;

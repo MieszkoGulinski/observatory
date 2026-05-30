@@ -18,4 +18,8 @@ export const observationsSchedule = sqliteTable("observations_schedule", {
   // shutter aperture and focusing cannot be controlled remotely and must be set manually
 });
 
+// Later it may be possible to:
+// - register calibration frames
+// - control multiple telescopes independently
+
 export type ObservationScheduleItem = typeof observationsSchedule.$inferSelect;
