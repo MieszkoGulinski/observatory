@@ -43,9 +43,10 @@ Note that to run the scheduler GUI, it needs to be built first, using appropriat
 
 ## Command line arguments
 
-| Argument      | Description                                    | Default      |
-| ------------- | ---------------------------------------------- | ------------ |
-| `--port`      | Serial port to use                             | `/dev/ttyS4` |
-| `--baudRate`  | Serial port baud rate                          | 9600         |
-| `--logToFile` | Log to file                                    | false        |
-| `--filesPath` | Path to store log files, raw images, SQLite DB | `.`          |
+| Argument       | Description                                    | Default      |
+| -------------- | ---------------------------------------------- | ------------ |
+| `--serialPort` | Serial port to use                             | `/dev/ttyS4` |
+| `--baudRate`   | Serial port baud rate                          | 9600         |
+| `--logToFile`  | Log to file                                    | false        |
+| `--filesPath`  | Path to store log files, raw images, SQLite DB | `.`          |
+| `--httpPort`   | Port for the REST API                          | 8080         |

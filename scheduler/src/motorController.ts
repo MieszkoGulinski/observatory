@@ -1,25 +1,33 @@
 import { SerialPort } from "serialport";
 import { DelimiterParser } from "@serialport/parser-delimiter";
+import logger from "./logger.ts";
 
 const WATCHDOG_TIME_MS = 60000; // 1 minute
+
+type SensorState = {
+  roofState: string; // TODO enum
+  cloudCover: number;
+  temperature: number;
+  humidity: number;
+};
 
 class MotorController {
   serialPort: SerialPort;
   timeout?: NodeJS.Timeout;
+  lastSensorState: SensorState;
 
   constructor(path: string, baudRate: number) {
-    console.log("Attempting to open port", path);
+    logger.info("Attempting to open port %s", path);
     try {
       this.serialPort = new SerialPort({
         path,
         baudRate,
       });
     } catch (error) {
-      console.error("Failed to open port", error);
+      logger.fatal(error, "Failed to open port");
       process.exit(1);
     }
-    // TODO pino for logging, redirect to log file
-    console.log("Successfully opened port");
+    logger.info("Successfully opened port");
 
     // Watchdog
     this.resetWatchdog();
@@ -41,8 +49,8 @@ class MotorController {
   }
 
   onTimeout() {
-    console.error("Watchdog timeout");
-    // TODO log error and crash the process
+    logger.error("Watchdog timeout");
+    process.exit(1);
   }
 }
 

@@ -5,6 +5,7 @@
     "outDir": "dist",
     "rewriteRelativeImportExtensions": true,
     "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true
   }
 }

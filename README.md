@@ -14,8 +14,9 @@ The codebase is organized into the following main components:
 - Scheduler - written in JavaScript (running on Bun), providing a web UI, running on a Raspberry Pi
 - Motor controller - written in C++ (Arduino)
 - Processing pipeline - written in Python, running on a PC
+- Documentation about mechanical construction of the observatory
 
-## Scheduler
+## Scheduler and web UI
 
 The scheduler is responsible for planning observations and executing them. It runs on a Raspberry Pi and provides a web UI for configuration and monitoring.
 
@@ -26,3 +27,5 @@ Scheduler has the following functionalities:
 - Monitoring status using a web UI
 - Communication with the motor controller via serial port
 - Downloading acquired data
+
+The scheduler Node.js process does not serve the web UI. While the UI is served at port 5173, the scheduler REST API listens on port 8080. The `scheduler` folder contains only the Node.js scheduler and related files. The web UI code (React) is located in the `gui` folder.
