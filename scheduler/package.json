@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@serialport/bindings-interface": "^1.2.2",
+    "drizzle-orm": "^1.0.0-rc.3",
     "fastify": "^5.8.5",
     "pino": "^10.3.1",
     "serialport": "^13.0.0",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/node": "^25.9.1",
     "@types/yargs": "^17.0.35",
+    "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.3"
   }
 }

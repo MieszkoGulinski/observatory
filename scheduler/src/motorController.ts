@@ -11,23 +11,28 @@ type SensorState = {
   humidity: number;
 };
 
+// Handles communications with the microcontroller board controlling the rotator
+// and roof motors and sensors. Note that the microcontroller will auto-close the
+// roof in case of detecting bad weather independently of commands from the
+// scheduler.
+
 class MotorController {
   serialPort: SerialPort;
   timeout?: NodeJS.Timeout;
-  lastSensorState: SensorState;
+  lastSensorState: SensorState | null;
 
   constructor(path: string, baudRate: number) {
-    logger.info("Attempting to open port %s", path);
+    logger.info("Attempting to open serial port %s", path);
     try {
       this.serialPort = new SerialPort({
         path,
         baudRate,
       });
     } catch (error) {
-      logger.fatal(error, "Failed to open port");
+      logger.fatal(error, "Failed to open serial port");
       process.exit(1);
     }
-    logger.info("Successfully opened port");
+    logger.info("Successfully opened serial port");
 
     // Watchdog
     this.resetWatchdog();
@@ -37,7 +42,7 @@ class MotorController {
       new DelimiterParser({ delimiter: "\n" }),
     );
     parser.on("data", (data: Buffer) => {
-      // TODO handle the incoming message
+      // TODO handle the incoming message, decode it and update lastSensorState
       console.log("data", data.toString());
       this.resetWatchdog();
     });
@@ -49,8 +54,12 @@ class MotorController {
   }
 
   onTimeout() {
-    logger.error("Watchdog timeout");
+    logger.error("Motor controller watchdog timeout");
     process.exit(1);
+  }
+
+  async sendCommand(command: string) {
+    //
   }
 }
 
