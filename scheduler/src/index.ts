@@ -12,6 +12,11 @@ const backupController = new BackupController();
 
 const app = Fastify({ logger: false });
 
+app.get("/", async () => {
+  // Ok:
+  return {};
+});
+
 const start = async () => {
   try {
     logger.info("Initializing HTTP server on port %d", config.httpPort);

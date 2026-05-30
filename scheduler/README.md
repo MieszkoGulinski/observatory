@@ -50,3 +50,5 @@ Note that to run the scheduler GUI, it needs to be built first, using appropriat
 | `--logToFile`  | Log to file                                    | false        |
 | `--filesPath`  | Path to store log files, raw images, SQLite DB | `.`          |
 | `--httpPort`   | Port for the REST API                          | 8080         |
+| `--latitude`   | Latitude of the observatory                    | 54           |
+| `--longitude`  | Longitude of the observatory                   | 18           |
