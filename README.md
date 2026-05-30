@@ -29,3 +29,9 @@ Scheduler has the following functionalities:
 - Downloading acquired data
 
 The scheduler Node.js process does not serve the web UI. While the UI is served at port 5173, the scheduler REST API listens on port 8080. The `scheduler` folder contains only the Node.js scheduler and related files. The web UI code (React) is located in the `gui` folder.
+
+## Troubleshooting
+
+| Error message                        | Solution                                                                                              |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| No such built-in module: node:sqlite | Use `nvm` to use a compatible version of Node.js according to `.nvmrc` file, using `nvm use` command. |

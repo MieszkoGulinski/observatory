@@ -35,8 +35,8 @@ class ScheduleExecutor {
         // to prevent issues with database file being written to while being copied.
 
         // Note that it's scheduler's responsibility to insert new task after the last one should be completed. Otherwise, the
-        // scheduler will skip over the scheduled task. This is intentional so that we skip observations when the conditions
-        // are not met
+        // scheduler will skip over the scheduled task. This is intentional so that we skip observations when the weather
+        // conditions are not met.
 
         // Initial wait for MCU status data
         if (this.motorController.lastSensorState === null) {
@@ -52,11 +52,19 @@ class ScheduleExecutor {
         const { roofState, openingAllowed } =
           this.motorController.lastSensorState;
         if (roofState === "CLOSED" && openingAllowed && isNight) {
+          logger.info("Submitting command to open roof");
           this.motorController.sendOpenCommand();
           continue;
         }
-        if (roofState === "OPEN" && isDay) {
+        if ((roofState === "OPEN" || roofState === "OPENING") && isDay) {
+          logger.info("Submitting command to close roof");
           this.motorController.sendCloseCommand();
+          continue;
+        }
+
+        // If roof is not open, wait until it is open, there's no use starting observations.
+        if (roofState !== "OPEN") {
+          await delay(POLLING_INTERVAL);
           continue;
         }
 
