@@ -1,12 +1,11 @@
 import { getTwilight } from "sunrise-sunset-js";
 
-function isDayNight() {
+export function isDayNight() {
   const now = new Date();
-  const { astronomicalDawn, astronomicalDusk } = getTwilight(54, 28, now);
+  // TODO pass the coordinates as config
+  const { astronomicalDawn, astronomicalDusk } = getTwilight(54, 18, now);
   return {
     isDay: now >= astronomicalDawn && now <= astronomicalDusk,
     isNight: now < astronomicalDawn || now > astronomicalDusk,
   };
 }
-
-export default isDayNight;
