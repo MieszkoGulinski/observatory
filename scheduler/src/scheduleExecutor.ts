@@ -5,6 +5,7 @@ import db from "./db/index.ts";
 import { observationsSchedule } from "./db/schema.ts";
 import { and, eq, gt, lte } from "drizzle-orm";
 import executeObservation from "./executeObservation.ts";
+import isDayNight from "./calculateDayNight.ts";
 
 const POLL_TIME_WINDOW = 60000; // 1 min
 const POLLING_INTERVAL = 5000; // 5 s
@@ -45,14 +46,16 @@ class ScheduleExecutor {
 
         // If it's time to open the roof, send command to open the roof.
         // If it's time to close the roof, send command to close the roof.
-        // TODO add time conditions
         // TODO add timeouts using Promise.race so that we can handle potential hangs
-        const { roofState } = this.motorController.lastSensorState;
-        if (roofState === "CLOSED") {
+
+        const { isDay, isNight } = isDayNight();
+        const { roofState, openingAllowed } =
+          this.motorController.lastSensorState;
+        if (roofState === "CLOSED" && openingAllowed && isNight) {
           await this.motorController.sendCommand("OPEN");
           continue;
         }
-        if (roofState === "OPEN") {
+        if (roofState === "OPEN" && isDay) {
           await this.motorController.sendCommand("CLOSE");
           continue;
         }

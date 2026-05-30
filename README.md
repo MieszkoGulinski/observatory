@@ -11,7 +11,7 @@ Operating the telescope involves the following steps:
 
 The codebase is organized into the following main components:
 
-- Scheduler - written in JavaScript (running on Bun), providing a web UI, running on a Raspberry Pi
+- Scheduler - written in TypeScript (running on Node.js), providing a web UI, running on a Raspberry Pi
 - Motor controller - written in C++ (Arduino)
 - Processing pipeline - written in Python, running on a PC
 - Documentation about mechanical construction of the observatory

@@ -14,6 +14,7 @@
     "fastify": "^5.8.5",
     "pino": "^10.3.1",
     "serialport": "^13.0.0",
+    "sunrise-sunset-js": "^3.2.1",
     "tsx": "^4.22.3",
     "yargs": "^18.0.0"
   },

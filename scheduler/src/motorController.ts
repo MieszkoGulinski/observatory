@@ -4,8 +4,10 @@ import logger from "./logger.ts";
 
 const WATCHDOG_TIME_MS = 60000; // 1 minute
 
+type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
 type SensorState = {
-  roofState: string; // TODO enum
+  roofState: RoofState;
+  openingAllowed: boolean;
   cloudCover: number;
   temperature: number;
   humidity: number;

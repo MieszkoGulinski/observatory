@@ -12,18 +12,15 @@ const app = Fastify({ logger: false });
 
 const start = async () => {
   try {
-    logger.info("Initializing server");
-    // Start REST API
+    logger.info("Initializing HTTP server on port %d", config.httpPort);
     await app.listen({
       port: config.httpPort,
     });
+
     logger.info("Setting up database tables");
-
-    // Setup database tables if they don't exist
     setupTables();
-    logger.info("Starting schedule executor");
 
-    // Start the schedule executor
+    logger.info("Starting schedule executor");
     scheduleExecutor.run();
   } catch (err) {
     logger.fatal(err, "Unable to start the server");
