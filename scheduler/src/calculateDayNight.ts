@@ -1,47 +1,54 @@
-import { getTwilight } from "sunrise-sunset-js";
+import {
+  getSunrise,
+  getSunset,
+  getTwilight,
+  type TwilightTimes,
+} from "sunrise-sunset-js";
 import dayjs from "dayjs";
 import config from "./config.ts";
 
-const cache = new Map<
-  string,
-  { astronomicalDawn: Date; astronomicalDusk: Date }
->();
+type TwilightAndSunTimes = TwilightTimes & { sunrise: Date; sunset: Date };
 
-export function getTwilightByDay(day: Date) {
+const cache = new Map<string, TwilightAndSunTimes>();
+
+export function getTwilightByDay(day: Date): TwilightAndSunTimes {
   const dayStr = dayjs(day).format("YYYY-MM-DD");
   if (!cache.has(dayStr)) {
-    cache.set(dayStr, getTwilight(config.latitude, config.longitude, day));
+    cache.set(dayStr, {
+      ...getTwilight(config.latitude, config.longitude, day),
+      sunrise: getSunrise(config.latitude, config.longitude, day),
+      sunset: getSunset(config.latitude, config.longitude, day),
+    });
   }
 
   return cache.get(dayStr)!;
 }
 
+// Calculate day/night for the purposes of opening/closing the roof.
+
+// As we open/close roof to avoid damaging the camera by the Sun,
+// (in addition to auto-closing by the microcontroller on detecting bad weather),
+// and we want to be able to take flat frames during twilight,
+// we use sunrise/sunset times (not twilight times) to determine when to open/close the roof.
 export function isDayNight() {
   const now = new Date();
-  const { astronomicalDawn, astronomicalDusk } = getTwilightByDay(now);
+  const { sunrise, sunset } = getTwilightByDay(now);
   return {
-    isDay: now >= astronomicalDawn && now <= astronomicalDusk,
-    isNight: now < astronomicalDawn || now > astronomicalDusk,
+    isDay: now >= sunrise && now <= sunset,
+    isNight: now < sunrise || now > sunset,
   };
 }
 
+// Calculate day/night and twilight times for the specified period of time.
+// This is used by the GUI to plan observations.
 export const getObservationTimesForUpcomingDays = (
   numberOfDays: number = 365,
   offsetDays: number = 0,
-) => {
-  const times: Array<{
-    day: string;
-    astronomicalDawn: Date;
-    astronomicalDusk: Date;
-  }> = [];
+): Record<string, TwilightAndSunTimes> => {
+  const observationTimes: Record<string, TwilightAndSunTimes> = {};
   for (let i = 0; i < numberOfDays; i++) {
-    const day = dayjs()
-      .add(i + offsetDays, "day")
-      .toDate();
-    times.push({
-      day: dayjs(day).format("YYYY-MM-DD"),
-      ...getTwilightByDay(day),
-    });
+    const day = dayjs().add(i + offsetDays, "day");
+    observationTimes[day.format("YYYY-MM-DD")] = getTwilightByDay(day.toDate());
   }
-  return times;
+  return observationTimes;
 };

@@ -11,6 +11,11 @@ type SensorState = {
   roofState: RoofState;
   openingAllowed: boolean;
   trackingStatus: TrackingStatus;
+  lha: number;
+  dec: number;
+  temperature: number;
+  humidity: number;
+  batteryVoltage: number;
 };
 
 // Handles communications with the microcontroller board controlling the rotator
@@ -63,88 +68,43 @@ class MotorController {
     process.exit(1);
   }
 
-  // Message format:
-  // First letter: roof status (O=open C=closed o=opening c=closing)
-  // Second letter: dangerous weather sensor status (Y=ok N=dangerous weather)
-  // Third letter: tracking status (T=tracking active, S=during setting, I=idle)
+  // See docs/protocol.md for message format
   onMessage(message: string) {
-    const roofStatusLetter = message[0];
-    const weatherStatusLetter = message[1];
-    const trackingStatusLetter = message[2];
+    const splitMessage = message.split(" ");
+    const roofStatusWord = splitMessage[0];
+    const weatherStatusLetter = splitMessage[1];
+    const trackingStatusLetter = splitMessage[2];
 
     this.lastSensorState = {
-      roofState: this.decodeRoofStatus(roofStatusLetter),
-      openingAllowed: this.decodeOpeningAllowed(weatherStatusLetter),
-      trackingStatus: this.decodeTrackingStatus(trackingStatusLetter),
+      roofState: roofStatusWord as RoofState,
+      openingAllowed: weatherStatusLetter === "COND_OK",
+      trackingStatus: trackingStatusLetter as TrackingStatus,
+      lha: parseInt(splitMessage[3]) / 10,
+      dec: parseInt(splitMessage[4]) / 10,
+      temperature: parseInt(splitMessage[5]),
+      humidity: parseInt(splitMessage[6]),
+      batteryVoltage: parseInt(splitMessage[7]) / 10,
     };
     this.resetWatchdog();
   }
 
-  private decodeRoofStatus(letter: string): RoofState {
-    switch (letter) {
-      case "O":
-        return "OPEN";
-      case "C":
-        return "CLOSED";
-      case "o":
-        return "OPENING";
-      case "c":
-        return "CLOSING";
-      default:
-        throw new Error(`Unknown roof status letter: ${letter}`);
-    }
-  }
-
-  private decodeOpeningAllowed(letter: string): boolean {
-    switch (letter) {
-      case "Y":
-        return true;
-      case "N":
-        return false;
-      default:
-        throw new Error(`Unknown opening allowed letter: ${letter}`);
-    }
-  }
-
-  private decodeTrackingStatus(letter: string): TrackingStatus {
-    switch (letter) {
-      case "T":
-        return "TRACKING";
-      case "S":
-        return "SETTING";
-      case "I":
-        return "IDLE";
-      default:
-        throw new Error(`Unknown tracking status letter: ${letter}`);
-    }
-  }
-
-  // Available commands are:
-  // - H - heartbeat
-  // - O - open roof
-  // - C - close roof
-  // - R17000005 - rotate to given coordinates, with 0.1 deg resolution and start tracking
-
-  // 4 digits for local hour angle with 180 degree offset from meridian plane
-  // Setting RA drive exactly to the meridian plane would be indicated as 1800.
-  // Offset is used to avoid negative values in hour angle.
-  // In this example 1700 = 170 deg, i.e. -10 deg from meridian (west)
-
-  // 4 digits for polar angle, in this example 0005 = 0.5 degree = +89.5 degrees declination
-  // Polar angle for southern celestial hemisphere will be greater than 90 degrees,
-  // e.g. 1005 = 100.5 degrees from northern celestial pole = -10.5 degrees declination
-
   sendHeartbeat() {
-    this.sendCommand("H");
+    this.sendCommand("HEARTBEAT");
   }
   sendCloseCommand() {
-    this.sendCommand("C");
+    this.sendCommand("CLOSE");
   }
   sendOpenCommand() {
-    this.sendCommand("O");
+    this.sendCommand("OPEN");
+  }
+  sendGotoCommand(lha: number, dec: number) {
+    this.sendCommand(`GOTO ${lha} ${dec}`);
+  }
+  sendStopCommand() {
+    this.sendCommand("STOP");
   }
   private formatAngle(value: number) {
-    return value.toFixed(1).replace(".", "").padStart(4, "0");
+    return value.toFixed(1).replace(".", "");
   }
   sendCoordinatesCommand(offsetLHA: number, polarAngle: number) {
     this.sendCommand(
