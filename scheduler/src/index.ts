@@ -11,24 +11,25 @@ import {
   handleGetSchedule,
   handleScheduleObservation,
   handleUpdateObservation,
+  handleGetStatus,
 } from "./apiHandlers.ts";
+import OSLoadControler from "./osLoadController.ts";
 
 const motorController = new MotorController(config.serialPort, config.baudRate);
 const scheduleExecutor = new ScheduleExecutor(motorController);
 const backupController = new BackupController();
+const osLoadController = new OSLoadControler();
 
 const app = Fastify({ logger: false });
-
-app.get("/", async () => {
-  // Endpoint to check if the scheduler is alive.
-  return {};
-});
 
 app.get("/observation-times", handleGetObservationTimes);
 app.get("/schedule", handleGetSchedule);
 app.post("/schedule", handleScheduleObservation);
 app.patch("/schedule/:id", handleUpdateObservation);
 app.delete("/schedule/:id", handleDeleteObservation);
+app.get("/status", () =>
+  handleGetStatus(motorController, osLoadController),
+);
 
 const start = async () => {
   try {
@@ -43,6 +44,7 @@ const start = async () => {
     logger.info("Starting schedule executor");
     scheduleExecutor.run();
     backupController.run();
+    osLoadController.run();
   } catch (err) {
     logger.fatal(err, "Unable to start the server");
     process.exit(1);

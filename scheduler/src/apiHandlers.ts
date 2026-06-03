@@ -3,6 +3,8 @@ import { getObservationTimesForUpcomingDays } from "./calculateDayNight.ts";
 import db from "./db/index.ts";
 import { observationsSchedule } from "./db/schema.ts";
 import { and, gte, lte } from "drizzle-orm";
+import type MotorController from "./motorController.ts";
+import type OSLoadControler from "./osLoadController.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
 
@@ -66,6 +68,13 @@ export async function handleDeleteObservation(request: FastifyRequest) {
 
 // Return current time in UNIX timestamp in ms - may be necessary for the GUI
 // to avoid clock drift
-export async function getCurrentTime() {
-  return Date.now();
+export async function handleGetStatus(
+  motorController: MotorController,
+  osLoadController: OSLoadControler,
+) {
+  return {
+    time: Date.now(),
+    controllerState: motorController.lastSensorState,
+    osLoad: osLoadController.getOSLoad(),
+  };
 }
