@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx src/index.ts",
+    "simulator": "tsx src/simulator.ts",
     "tsc": "tsc --noEmit",
     "build": "tsc"
   },
