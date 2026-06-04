@@ -1,10 +1,10 @@
 import { type FastifyRequest } from "fastify";
-import { getObservationTimesForUpcomingDays } from "./calculateDayNight.ts";
-import db from "./db/index.ts";
-import { observationsSchedule } from "./db/schema.ts";
+import { getObservationTimesForUpcomingDays } from "../calculateDayNight.ts";
+import db from "../db/index.ts";
+import { observationsSchedule, osLoadLog } from "../db/schema.ts";
 import { and, gte, lte } from "drizzle-orm";
-import type MotorController from "./motorController.ts";
-import type OSLoadControler from "./osLoadController.ts";
+import type MotorController from "../motorController.ts";
+import type OSLoadControler from "../osLoadController.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
 
@@ -66,7 +66,7 @@ export async function handleDeleteObservation(request: FastifyRequest) {
   return {};
 }
 
-// Return current time in UNIX timestamp in ms - may be necessary for the GUI
+// Includes current time in UNIX timestamp in ms - may be necessary for the GUI
 // to avoid clock drift
 export async function handleGetStatus(
   motorController: MotorController,
@@ -77,4 +77,31 @@ export async function handleGetStatus(
     controllerState: motorController.lastSensorState,
     osLoad: osLoadController.getOSLoad(),
   };
+}
+
+export async function handleGetOsLoad(request: FastifyRequest) {
+  const { start, end } = request.query as {
+    start: string;
+    end: string;
+  };
+  if (!start || !end) {
+    // TODO 400 Bad Request
+    throw new Error("Missing start or end time");
+  }
+  const startDate = parseInt(start, 10);
+  const endDate = parseInt(end, 10);
+  if (isNaN(startDate) || isNaN(endDate)) {
+    // TODO 400 Bad Request
+    throw new Error("Invalid start or end time");
+  }
+  return db
+    .select()
+    .from(osLoadLog)
+    .where(
+      and(
+        lte(osLoadLog.timestamp, endDate),
+        gte(osLoadLog.timestamp, startDate),
+      ),
+    )
+    .all();
 }
