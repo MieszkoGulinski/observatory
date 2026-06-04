@@ -8,10 +8,9 @@ To run the GUI locally:
 npm run dev
 ```
 
-To build the GUI for production:
+To build and serve the GUI for production:
 
 ```bash
 npm run build
+npm run start
 ```
-
-TODO: serve the built static GUI files on port 5173
