@@ -1,5 +1,7 @@
+import { Button } from "./components/ui/button";
+
 function App() {
-  return <div className="text-sm">ok</div>;
+  return <Button>ok</Button>;
 }
 
 export default App;
