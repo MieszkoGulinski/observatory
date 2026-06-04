@@ -54,11 +54,13 @@ class ScheduleExecutor {
         if (roofState === "CLOSED" && openingAllowed && isNight) {
           logger.info("Submitting command to open roof");
           this.motorController.sendOpenCommand();
+          await delay(POLLING_INTERVAL);
           continue;
         }
         if ((roofState === "OPEN" || roofState === "OPENING") && isDay) {
           logger.info("Submitting command to close roof");
           this.motorController.sendCloseCommand();
+          await delay(POLLING_INTERVAL);
           continue;
         }
 
