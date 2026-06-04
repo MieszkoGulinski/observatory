@@ -1,17 +1,98 @@
 import { fetcher } from "@/utils";
-import { useEffect } from "react";
 import useSWR from "swr";
 
+// TODO share the same types in scheduler and React frontend (both use TypeScript)
+type StatusData = {
+  time: number;
+  controllerState: {
+    roofState: "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
+    trackingStatus: "TRACKING" | "SETTING" | "IDLE";
+    dec: number;
+    lha: number;
+    openingAllowed: boolean;
+    temperature: number;
+    humidity: number;
+    batteryVoltage: number;
+  };
+  osLoad: {
+    uptime: number;
+    freeMemory: number;
+    load1: number;
+    load5: number;
+    load15: number;
+  };
+};
+
 function StatusPage() {
-  useEffect(() => {
-    console.log("displaying StatusPage");
-  }, []);
-  const { data, error, isLoading } = useSWR("/status", fetcher);
+  const { data, error, isLoading } = useSWR<StatusData>("/status", fetcher);
 
   if (isLoading) return <>Loading...</>;
-  if (error) return <>Error</>;
+  if (error) return <>Error loading data</>;
 
-  return <>{JSON.stringify(data, null, 2)}</>;
+  return (
+    <div>
+      <table>
+        <tbody>
+          <tr>
+            <td>Current time</td>
+            <td>{new Date(data.time).toISOString()}</td>
+          </tr>
+          <tr>
+            <td>Roof state</td>
+            <td>{data.controllerState.roofState}</td>
+          </tr>
+          <tr>
+            <td>Opening allowed?</td>
+            <td>{data.controllerState.openingAllowed ? "Yes" : "No"}</td>
+          </tr>
+          <tr>
+            <td>Tracking status</td>
+            <td>{data.controllerState.trackingStatus}</td>
+          </tr>
+          <tr>
+            <td>Declination</td>
+            <td>{data.controllerState.dec}</td>
+          </tr>
+          <tr>
+            <td>Local Hour Angle</td>
+            <td>{data.controllerState.lha}</td>
+          </tr>
+          <tr>
+            <td>Temperature</td>
+            <td>{data.controllerState.temperature}</td>
+          </tr>
+          <tr>
+            <td>Humidity</td>
+            <td>{data.controllerState.humidity}</td>
+          </tr>
+          <tr>
+            <td>Battery voltage</td>
+            <td>{data.controllerState.batteryVoltage}</td>
+          </tr>
+          <tr>
+            <td>Uptime</td>
+            <td>{data.osLoad.uptime}</td>
+          </tr>
+          <tr>
+            <td>Free memory</td>
+            <td>{data.osLoad.freeMemory}</td>
+          </tr>
+          <tr>
+            <td>1 min load</td>
+            <td>{data.osLoad.load1}</td>
+          </tr>
+          <tr>
+            <td>5 min load</td>
+            <td>{data.osLoad.load5}</td>
+          </tr>
+          <tr>
+            <td>15 min load</td>
+            <td>{data.osLoad.load15}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default StatusPage;
