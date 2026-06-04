@@ -17,6 +17,7 @@ type StatusData = {
   osLoad: {
     uptime: number;
     freeMemory: number;
+    totalMemory: number;
     load1: number;
     load5: number;
     load15: number;
@@ -33,7 +34,7 @@ function StatusPage() {
     <div>
       <table>
         <tbody>
-          <tr>
+          <tr className="border-b">
             <td>Current time</td>
             <td>{new Date(data.time).toISOString()}</td>
           </tr>
@@ -50,32 +51,40 @@ function StatusPage() {
             <td>{data.controllerState.trackingStatus}</td>
           </tr>
           <tr>
-            <td>Declination</td>
+            <td>Declination [deg]</td>
             <td>{data.controllerState.dec}</td>
           </tr>
-          <tr>
-            <td>Local Hour Angle</td>
+          <tr className="border-b">
+            <td>Local Hour Angle [deg]</td>
             <td>{data.controllerState.lha}</td>
           </tr>
           <tr>
-            <td>Temperature</td>
+            <td>Temperature [C]</td>
             <td>{data.controllerState.temperature}</td>
           </tr>
           <tr>
-            <td>Humidity</td>
+            <td>Humidity [%]</td>
             <td>{data.controllerState.humidity}</td>
           </tr>
-          <tr>
-            <td>Battery voltage</td>
+          <tr className="border-b">
+            <td>Battery voltage [V]</td>
             <td>{data.controllerState.batteryVoltage}</td>
           </tr>
           <tr>
-            <td>Uptime</td>
+            <td>Uptime [s]</td>
             <td>{data.osLoad.uptime}</td>
           </tr>
           <tr>
-            <td>Free memory</td>
-            <td>{data.osLoad.freeMemory}</td>
+            <td>Free/Total memory [MiB]</td>
+            <td>
+              {(data.osLoad.freeMemory / 1024 / 1024).toFixed(2)} /{" "}
+              {(data.osLoad.totalMemory / 1024 / 1024).toFixed(2)} (
+              {(
+                (data.osLoad.freeMemory / data.osLoad.totalMemory) *
+                100
+              ).toFixed(2)}
+              %)
+            </td>
           </tr>
           <tr>
             <td>1 min load</td>

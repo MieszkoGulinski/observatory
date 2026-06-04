@@ -34,6 +34,7 @@ export const osLoadLog = sqliteTable("os_load_log", {
   // OS statistics
   uptime: integer().notNull(), // seconds
   freeMemory: integer().notNull(), // bytes
+  totalMemory: integer().notNull(), // bytes
   load1: real().notNull(), // 1 minute load
   load5: real().notNull(), // 5 minute load
   load15: real().notNull(), // 15 minute load

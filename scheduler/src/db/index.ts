@@ -35,6 +35,7 @@ export const setupTables = () => {
     timestamp INTEGER NOT NULL,
     uptime INTEGER NOT NULL,
     freeMemory INTEGER NOT NULL,
+    totalMemory INTEGER NOT NULL,
     load1 REAL NOT NULL,
     load5 REAL NOT NULL,
     load15 REAL NOT NULL

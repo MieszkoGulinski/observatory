@@ -15,16 +15,19 @@ class OSLoadControler {
   getOSLoad() {
     const uptime = os.uptime();
     const freeMemory = os.freemem();
+    const totalMemory = os.totalmem();
     const load = os.loadavg();
     return {
       uptime,
       freeMemory,
+      totalMemory,
       load1: load[0],
       load5: load[1],
       load15: load[2],
     };
   }
   saveOSLoad() {
+    // skip fields not saved to db
     const osLoad = this.getOSLoad();
     const now = Date.now();
     db.insert(osLoadLog).values({
