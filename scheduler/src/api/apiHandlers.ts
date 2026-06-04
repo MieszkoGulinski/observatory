@@ -72,6 +72,7 @@ export async function handleGetStatus(
   motorController: MotorController,
   osLoadController: OSLoadControler,
 ) {
+  console.log("Received handleGetStatus request");
   return {
     time: Date.now(),
     controllerState: motorController.lastSensorState,

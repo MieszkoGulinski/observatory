@@ -10,6 +10,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
     "@serialport/bindings-interface": "^1.2.2",
     "dayjs": "^1.11.21",
     "drizzle-orm": "^1.0.0-rc.3",

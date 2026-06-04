@@ -10,12 +10,19 @@ import {
 } from "./apiHandlers.ts";
 import type MotorController from "../motorController.ts";
 import type OSLoadControler from "../osLoadController.ts";
+import cors from "@fastify/cors";
 
-export const createApiServer = (
+export const createApiServer = async (
   motorController: MotorController,
   osLoadController: OSLoadControler,
 ) => {
   const app = Fastify({ logger: false });
+
+  // this allows connections both from localhost and IP,
+  // but for public sites it's not recommended
+  await app.register(cors, {
+    origin: "*",
+  });
 
   app.get("/observation-times", handleGetObservationTimes);
   app.get("/schedule", handleGetSchedule);

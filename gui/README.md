@@ -1,5 +1,13 @@
 # Scheduler web GUI
 
+## Page sections:
+
+- Schedule display
+- Create observation(s)
+- Edit/delete observation(s)
+- Display last system status
+- System load graphs
+
 ## Quick start
 
 To run the GUI locally:

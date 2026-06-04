@@ -23,7 +23,7 @@ const start = async () => {
     osLoadController.run();
 
     logger.info("Initializing HTTP server on port %d", config.httpPort);
-    const app = createApiServer(motorController, osLoadController);
+    const app = await createApiServer(motorController, osLoadController);
     await app.listen({
       port: config.httpPort,
     });
