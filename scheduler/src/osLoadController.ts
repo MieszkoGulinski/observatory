@@ -7,7 +7,10 @@ const STATUS_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 30 minutes
 class OSLoadControler {
   interval: NodeJS.Timeout | null = null;
   run() {
-    this.interval = setInterval(this.saveOSLoad, STATUS_UPDATE_INTERVAL_MS);
+    this.interval = setInterval(
+      () => this.saveOSLoad(),
+      STATUS_UPDATE_INTERVAL_MS,
+    );
   }
   getOSLoad() {
     const uptime = os.uptime();
