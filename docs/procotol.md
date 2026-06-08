@@ -33,12 +33,22 @@ Similarly to messages sent from scheduler to microcontroller, words are separate
 - First word indicates status of the roof, can be OPEN, OPENING, CLOSED, CLOSING
 - Second word indicates if weather conditions are good for observation (no rain/snow), can be COND_OK or COND_BAD.
 - Third word indicates tracking status, can be TRACKING (when pointing at the specified location), SETTING (during rotating towards the specified location) or IDLE.
-- Next are current position of the mount, in the same format as in the GOTO command, current temperature in Celsius, humidity in percent and battery voltage in multiples of 0.1 V.
+- Next are current position of the mount, in the same format as in the GOTO command, air and camera temperatures in Celsius, humidity in percent and battery voltage in multiples of 0.1 V.
 
 Example:
 
 ```
-OPEN COND_OK TRACKING 450 -100 -15 65 127
+OPEN COND_OK TRACKING 450 -100 -15 -5 65 127
 ```
 
-meaning: roof open, weather conditions ok, tracking active, LHA=45 deg, DEC=-10 deg, temp = -15 deg C, humidity = 65%, battery = 12.7 V
+meaning:
+
+- roof open
+- conditions suitable for observation
+- tracking active
+- LHA = 45 deg
+- DEC = -10 deg
+- air temperature = -15 C
+- camera temperature = -5 C
+- humidity = 65%
+- battery voltage = 12.7 V

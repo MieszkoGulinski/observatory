@@ -9,11 +9,12 @@ type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
 type TrackingStatus = "TRACKING" | "SETTING" | "IDLE";
 type SensorState = {
   roofState: RoofState;
-  openingAllowed: boolean;
+  conditionsSuitableForObservation: boolean;
   trackingStatus: TrackingStatus;
   lha: number;
   dec: number;
-  temperature: number;
+  airTemperature: number;
+  cameraTemperature: number;
   humidity: number;
   batteryVoltage: number;
 };
@@ -69,21 +70,23 @@ class MotorController {
   }
 
   // See docs/protocol.md for message format
+  // Example message: OPEN COND_OK TRACKING 450 -100 -15 -5 65 127
   onMessage(message: string) {
     const splitMessage = message.split(" ");
     const roofStatusWord = splitMessage[0];
-    const weatherStatusLetter = splitMessage[1];
-    const trackingStatusLetter = splitMessage[2];
+    const weatherStatusWord = splitMessage[1];
+    const trackingStatusWord = splitMessage[2];
 
     this.lastSensorState = {
       roofState: roofStatusWord as RoofState,
-      openingAllowed: weatherStatusLetter === "COND_OK",
-      trackingStatus: trackingStatusLetter as TrackingStatus,
+      conditionsSuitableForObservation: weatherStatusWord === "COND_OK",
+      trackingStatus: trackingStatusWord as TrackingStatus,
       lha: parseInt(splitMessage[3]) / 10,
       dec: parseInt(splitMessage[4]) / 10,
-      temperature: parseInt(splitMessage[5]),
-      humidity: parseInt(splitMessage[6]),
-      batteryVoltage: parseInt(splitMessage[7]) / 10,
+      airTemperature: parseInt(splitMessage[5]),
+      cameraTemperature: parseInt(splitMessage[6]),
+      humidity: parseInt(splitMessage[7]),
+      batteryVoltage: parseInt(splitMessage[8]) / 10,
     };
     this.resetWatchdog();
   }

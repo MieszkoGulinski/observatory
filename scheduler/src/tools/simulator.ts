@@ -1,6 +1,6 @@
 // To run the simulator, use this command:
 // npm run simulator /dev/pts/9
-// where /dev/pts/9 is the serial port to use in the simulator (see README for instructions)
+// where /dev/pts/9 is the serial port to use in the simulator
 
 import { DelimiterParser, SerialPort } from "serialport";
 
@@ -20,10 +20,23 @@ class Simulator {
     });
   }
 
+  submitMessage() {
+    const lha = 45;
+    const dec = -10;
+    const airTemperature = -15;
+    const cameraTemperature = -5;
+    const humidity = 65;
+    const batteryVoltage = 12;
+
+    this.serialPort.write(
+      `OPEN COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${humidity} ${batteryVoltage * 10}\n`,
+    );
+  }
+
   run() {
     try {
       setInterval(() => {
-        this.serialPort.write("OPEN COND_OK TRACKING 450 -100 -15 65 127\n");
+        this.submitMessage();
       }, INTERVAL_MS);
 
       const parser = this.serialPort.pipe(

@@ -2,24 +2,24 @@ import MotorController from "./motorController.ts";
 import ScheduleExecutor from "./scheduleExecutor.ts";
 import config from "./config.ts";
 import logger from "./logger.ts";
-import BackupController from "./backupController.ts";
-import OSLoadControler from "./osLoadController.ts";
+import BackupSaver from "./backupSaver.ts";
+import StatisticsSaver from "./statisticsSaver.ts";
 import { createApiServer } from "./api/index.ts";
 
 const motorController = new MotorController(config.serialPort, config.baudRate);
 const scheduleExecutor = new ScheduleExecutor(motorController);
-const backupController = new BackupController();
-const osLoadController = new OSLoadControler();
+const backupSaver = new BackupSaver();
+const statisticsSaver = new StatisticsSaver(motorController);
 
 const start = async () => {
   try {
     logger.info("Starting schedule executor");
     scheduleExecutor.run();
-    backupController.run();
-    osLoadController.run();
+    backupSaver.run();
+    statisticsSaver.run();
 
     logger.info("Initializing HTTP server on port %d", config.httpPort);
-    const app = await createApiServer(motorController, osLoadController);
+    const app = await createApiServer(motorController, statisticsSaver);
     await app.listen({
       port: config.httpPort,
     });

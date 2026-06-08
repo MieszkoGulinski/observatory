@@ -3,18 +3,18 @@ import {
   handleGetObservationTimes,
   handleGetSchedule,
   handleGetStatus,
-  handleGetOsLoad,
+  handleGetStatisticsHistory,
   handleScheduleObservation,
   handleUpdateObservation,
   handleDeleteObservation,
 } from "./apiHandlers.ts";
 import type MotorController from "../motorController.ts";
-import type OSLoadControler from "../osLoadController.ts";
+import type StatisticsSaver from "../statisticsSaver.ts";
 import cors from "@fastify/cors";
 
 export const createApiServer = async (
   motorController: MotorController,
-  osLoadController: OSLoadControler,
+  statisticsSaver: StatisticsSaver,
 ) => {
   const app = Fastify({ logger: false });
 
@@ -29,8 +29,10 @@ export const createApiServer = async (
   app.post("/schedule", handleScheduleObservation);
   app.patch("/schedule/:id", handleUpdateObservation);
   app.delete("/schedule/:id", handleDeleteObservation);
-  app.get("/status", () => handleGetStatus(motorController, osLoadController));
-  app.get("/os-load", handleGetOsLoad);
+  app.get("/current-status", () =>
+    handleGetStatus(motorController, statisticsSaver),
+  );
+  app.get("/statistics", handleGetStatisticsHistory);
 
   return app;
 };

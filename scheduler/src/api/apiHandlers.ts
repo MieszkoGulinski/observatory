@@ -1,10 +1,10 @@
 import { type FastifyRequest } from "fastify";
 import { getObservationTimesForUpcomingDays } from "../calculateDayNight.ts";
 import db from "../db/index.ts";
-import { observationsSchedule, osLoadLog } from "../db/schema.ts";
+import { observationsSchedule, statistics } from "../db/schema.ts";
 import { and, gte, lte } from "drizzle-orm";
+import type StatisticsSaver from "../statisticsSaver.ts";
 import type MotorController from "../motorController.ts";
-import type OSLoadControler from "../osLoadController.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
 
@@ -70,16 +70,16 @@ export async function handleDeleteObservation(request: FastifyRequest) {
 // to avoid clock drift
 export async function handleGetStatus(
   motorController: MotorController,
-  osLoadController: OSLoadControler,
+  statisticsSaver: StatisticsSaver,
 ) {
   return {
     time: Date.now(),
+    osStats: statisticsSaver.getOSStats(),
     controllerState: motorController.lastSensorState,
-    osLoad: osLoadController.getOSLoad(),
   };
 }
 
-export async function handleGetOsLoad(request: FastifyRequest) {
+export async function handleGetStatisticsHistory(request: FastifyRequest) {
   const { start, end } = request.query as {
     start: string;
     end: string;
@@ -96,11 +96,11 @@ export async function handleGetOsLoad(request: FastifyRequest) {
   }
   return db
     .select()
-    .from(osLoadLog)
+    .from(statistics)
     .where(
       and(
-        lte(osLoadLog.timestamp, endDate),
-        gte(osLoadLog.timestamp, startDate),
+        lte(statistics.timestamp, endDate),
+        gte(statistics.timestamp, startDate),
       ),
     )
     .all();

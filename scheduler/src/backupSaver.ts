@@ -4,7 +4,7 @@ import logger from "./logger.ts";
 
 const BACKUP_POLL_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
-class BackupController {
+class BackupSaver {
   prevIsDay: boolean;
   constructor() {
     this.prevIsDay = false; // this will trigger backup on startup too
@@ -31,4 +31,4 @@ class BackupController {
   }
 }
 
-export default BackupController;
+export default BackupSaver;
