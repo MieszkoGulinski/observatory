@@ -59,7 +59,7 @@ class StatisticsSaver {
   saveStatistics() {
     const statisticsObj = this.getStatistics();
     if (statisticsObj === null) return;
-    db.insert(statistics).values(statisticsObj);
+    db.insert(statistics).values(statisticsObj).execute();
   }
 }
 

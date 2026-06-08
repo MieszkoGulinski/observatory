@@ -9,7 +9,7 @@ export const observationsSchedule = sqliteTable("observations_schedule", {
   targetStar: text(), // target star name from astronomy catalog (may be empty for calibration / test frames)
 
   startDate: integer().notNull(), // UNIX timestamp in ms
-  endDate: integer(), // UNIX timestamp in ms, filled when the task is fully completed
+  endDate: integer().notNull(), // UNIX timestamp in ms
 
   ra: real().notNull(), // Right Ascension, decimal degrees
   dec: real().notNull(), // Declination, decimal degrees

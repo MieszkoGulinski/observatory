@@ -56,7 +56,6 @@ class ScheduleExecutor {
         // Polling, even if less efficient than event-based notification,
         // is simpler to implement and easier to understand (less risk of bugs).
         // The code detects if an observation needs to be started, and if so, executes it.
-        // Note that even
         const now = Date.now();
         const [task] = db
           .select()
@@ -75,7 +74,7 @@ class ScheduleExecutor {
         }
 
         // Execute the task.
-        await executeObservation(task.id);
+        await executeObservation(task, this.motorController);
       }
     } catch (error) {
       // All errors propagated to this level are critical and will lead to process termination.
