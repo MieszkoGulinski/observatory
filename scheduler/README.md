@@ -27,11 +27,7 @@ To run in development mode, using `tsx`:
 npm run dev
 ```
 
-Configuration via command line arguments must be done after `--` marker:
-
-```bash
-npm run dev -- --serialPort=/dev/ttyUSB1 --baudRate=115200 --logToFile --filesPath=/mnt/observatory-hdd
-```
+Configuration can be done using the `.env` file or command line arguments.
 
 To build:
 
@@ -39,10 +35,10 @@ To build:
 npm run build
 ```
 
-To run the built production code, with settings:
+To run the built production code:
 
 ```bash
-node dist/index.js --serialPort=/dev/ttyUSB1 --baudRate=115200 --logToFile --filesPath=/mnt/observatory-hdd
+node dist/index.js
 ```
 
 Note that to run the scheduler GUI, it needs to be built first, using appropriate npm script in the `gui` folder.
@@ -61,22 +57,20 @@ Note that to run the scheduler GUI, it needs to be built first, using appropriat
 
 ## Testing using a simulator and virtual serial port
 
-To setup the virtual serial port, use the following command in a separate terminal:
+The most convenient way to test is to run the app and simulator together using `app-and-simulator` script:
 
-```
-socat -d -d pty,raw,echo=0 pty,raw,echo=0
-```
-
-The command will return the names of the serial ports, e.g.:
-
-```
-2026/06/03 21:19:19 socat[272776] N PTY is /dev/pts/9
-2026/06/03 21:19:19 socat[272776] N PTY is /dev/pts/10
-2026/06/03 21:19:19 socat[272776] N starting data transfer loop with FDs [5,5] and [7,7]
+```bash
+npm run app-and-simulator
 ```
 
-One of these ports needs to be assigned to the scheduler, using the CLI argument `--serialPort`. Another port needs to be assigned to the simulator, passing it directly after the command (in another terminal), e.g.:
+This script starts:
 
-```
-npm run simulator /dev/pts/9
+1. Virtual serial port using `socat`
+2. Scheduler using the virtual serial port
+3. Simulator using the virtual serial port
+
+Note that it's necessary to have `socat` installed - on Debian/Ubuntu:
+
+```bash
+sudo apt install socat
 ```
