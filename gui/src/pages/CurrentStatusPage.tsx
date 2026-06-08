@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { fetcher } from "@/utils";
 import useSWR from "swr";
 
@@ -26,17 +27,17 @@ type StatusData = {
 };
 
 function StatusPage() {
-  const { data, error, isLoading } = useSWR<StatusData>(
+  const { data, error, isLoading, mutate } = useSWR<StatusData>(
     "/current-status",
     fetcher,
   );
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading || !data) return <>Loading...</>;
   if (error) return <>Error loading data</>;
 
   return (
     <div>
-      <table>
+      <table className="stats-table">
         <tbody>
           <tr className="border-b">
             <td>Current time</td>
@@ -108,6 +109,8 @@ function StatusPage() {
           </tr>
         </tbody>
       </table>
+
+      <Button onClick={() => mutate()}>Refresh</Button>
     </div>
   );
 }

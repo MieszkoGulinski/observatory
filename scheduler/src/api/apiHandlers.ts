@@ -1,4 +1,4 @@
-import { type FastifyRequest } from "fastify";
+import { type FastifyRequest, type FastifyReply } from "fastify";
 import { getObservationTimesForUpcomingDays } from "../calculateDayNight.ts";
 import db from "../db/index.ts";
 import { observationsSchedule, statistics } from "../db/schema.ts";
@@ -22,20 +22,18 @@ export function handleGetObservationTimes(request: FastifyRequest) {
 }
 
 // List planned observations in the given time range
-export function handleGetSchedule(request: FastifyRequest) {
+export function handleGetSchedule(request: FastifyRequest, reply: FastifyReply) {
   const { start, end } = request.query as {
     start: string;
     end: string;
   };
   if (!start || !end) {
-    // TODO 400 Bad Request
-    throw new Error("Missing start or end time");
+    return reply.status(400).send({ error: "Missing start or end time" });
   }
   const startDate = parseInt(start, 10);
   const endDate = parseInt(end, 10);
   if (isNaN(startDate) || isNaN(endDate)) {
-    // TODO 400 Bad Request
-    throw new Error("Invalid start or end time");
+    return reply.status(400).send({ error: "Invalid start or end time" });
   }
   return db
     .select()
@@ -79,20 +77,18 @@ export async function handleGetStatus(
   };
 }
 
-export async function handleGetStatisticsHistory(request: FastifyRequest) {
+export async function handleGetStatisticsHistory(request: FastifyRequest, reply: FastifyReply) {
   const { start, end } = request.query as {
     start: string;
     end: string;
   };
   if (!start || !end) {
-    // TODO 400 Bad Request
-    throw new Error("Missing start or end time");
+    return reply.status(400).send({ error: "Missing start or end time" });
   }
   const startDate = parseInt(start, 10);
   const endDate = parseInt(end, 10);
   if (isNaN(startDate) || isNaN(endDate)) {
-    // TODO 400 Bad Request
-    throw new Error("Invalid start or end time");
+    return reply.status(400).send({ error: "Invalid start or end time" });
   }
   return db
     .select()

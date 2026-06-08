@@ -13,6 +13,12 @@ body {
   margin: 0;
 }
 
+.stats-table td {
+  padding: 2px 5px 2px 5px;
+}
+
+/* Tailwind auto-added styles */
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Inter Variable', sans-serif;

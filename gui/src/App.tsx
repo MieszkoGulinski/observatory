@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SchedulePage from "./pages/SchedulePage";
-import StatusPage from "./pages/StatusPage";
-import SystemLoadPage from "./pages/SystemLoadPage";
+import CurrentStatusPage from "./pages/CurrentStatusPage";
+import StatisticsHistoryPage from "./pages/StatisticsHistoryPage";
 
 import { CalendarDaysIcon, ChartSplineIcon, CpuIcon } from "lucide-react";
 
@@ -14,24 +14,24 @@ function App() {
             <TabsTrigger value="schedule">
               <CalendarDaysIcon /> Schedule
             </TabsTrigger>
-            <TabsTrigger value="status">
+            <TabsTrigger value="currentStatus">
               <CpuIcon />
-              System Status
+              Current Status
             </TabsTrigger>
-            <TabsTrigger value="systemLoad">
+            <TabsTrigger value="statisticsHistory">
               <ChartSplineIcon />
-              System Load
+              Statistics
             </TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="schedule">
           <SchedulePage />
         </TabsContent>
-        <TabsContent value="status">
-          <StatusPage />
+        <TabsContent value="currentStatus">
+          <CurrentStatusPage />
         </TabsContent>
-        <TabsContent value="systemLoad">
-          <SystemLoadPage />
+        <TabsContent value="statisticsHistory">
+          <StatisticsHistoryPage />
         </TabsContent>
       </Tabs>
     </div>
