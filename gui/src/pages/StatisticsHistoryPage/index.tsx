@@ -3,26 +3,8 @@ import { fetcher } from "@/utils";
 import dayjs from "dayjs";
 import { useState } from "react";
 import useSWR from "swr";
-
-// TODO share the same types in scheduler and React frontend (both use TypeScript)
-type StatisticsRow = {
-  id: number;
-  timestamp: number;
-
-  // Sensor values
-  cameraTemperature: number;
-  airTemperature: number;
-  humidity: number;
-  batteryVoltage: number;
-
-  // OS statistics
-  uptime: number;
-  freeMemory: number;
-  totalMemory: number;
-  load1: number;
-  load5: number;
-  load15: number;
-};
+import { type StatisticsRow } from "./types";
+import StatisticsChart from "./StatisticsChart";
 
 function StatisticsHistoryPage() {
   const [searchStartTime, setSearchStartTime] = useState<number>(() =>
@@ -47,7 +29,14 @@ function StatisticsHistoryPage() {
       />
       {isLoading ? <>loading...</> : null}
       {error ? <>error</> : null}
-      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : null}
+      {data ? (
+        <StatisticsChart
+          data={data}
+          dataKey="cameraTemperature"
+          label="Camera temperature"
+          color="#ff0000"
+        />
+      ) : null}
     </>
   );
 }
