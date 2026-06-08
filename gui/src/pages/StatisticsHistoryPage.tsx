@@ -1,5 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { fetcher } from "@/utils";
+import dayjs from "dayjs";
+import { useState } from "react";
 import useSWR from "swr";
 
 // TODO share the same types in scheduler and React frontend (both use TypeScript)
@@ -22,24 +24,30 @@ type StatisticsRow = {
   load15: number;
 };
 
-// TODO add UI for setting search start and end times
-const searchEndTime = Date.now();
-const searchStartTime = searchEndTime - 24 * 60 * 60 * 1000; // 24 hours
-
 function StatisticsHistoryPage() {
-  const { data, error, isLoading, mutate } = useSWR<StatisticsRow[]>(
+  const [searchStartTime, setSearchStartTime] = useState<number>(() =>
+    dayjs().startOf("day").valueOf(),
+  );
+  const searchEndTime = dayjs(searchStartTime).add(1, "d").valueOf();
+  const { data, error, isLoading } = useSWR<StatisticsRow[]>(
     `/statistics?start=${searchStartTime}&end=${searchEndTime}`,
     fetcher,
   );
 
-  if (isLoading) return <>loading...</>;
-  if (error) return <>error</>;
-
   return (
     <>
-      <h1>Statistics history</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-      <Button onClick={() => mutate()}>Refresh</Button>
+      <Calendar
+        mode="single"
+        selected={new Date(searchStartTime)}
+        onSelect={(d) => {
+          if (!d) return;
+          setSearchStartTime(d.valueOf());
+        }}
+        className="rounded-lg border"
+      />
+      {isLoading ? <>loading...</> : null}
+      {error ? <>error</> : null}
+      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : null}
     </>
   );
 }
