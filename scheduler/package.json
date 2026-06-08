@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "tsx src/index.ts",
-    "simulator": "tsx src/simulator.ts",
+    "simulator": "tsx src/tools/simulator.ts",
+    "app-and-simulator": "tsx src/tools/appAndSimulator.ts",
     "db:push": "drizzle-kit push",
     "tsc": "tsc --noEmit",
     "build": "tsc"
