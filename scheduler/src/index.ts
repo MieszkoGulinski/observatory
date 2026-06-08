@@ -2,7 +2,6 @@ import MotorController from "./motorController.ts";
 import ScheduleExecutor from "./scheduleExecutor.ts";
 import config from "./config.ts";
 import logger from "./logger.ts";
-import { setupTables } from "./db/index.ts";
 import BackupController from "./backupController.ts";
 import OSLoadControler from "./osLoadController.ts";
 import { createApiServer } from "./api/index.ts";
@@ -14,9 +13,6 @@ const osLoadController = new OSLoadControler();
 
 const start = async () => {
   try {
-    logger.info("Setting up database tables");
-    setupTables();
-
     logger.info("Starting schedule executor");
     scheduleExecutor.run();
     backupController.run();

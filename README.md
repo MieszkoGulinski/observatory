@@ -32,6 +32,7 @@ The scheduler Node.js process does not serve the web UI. While the UI is served 
 
 ## Troubleshooting
 
-| Error message                        | Solution                                                                                              |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| No such built-in module: node:sqlite | Use `nvm` to use a compatible version of Node.js according to `.nvmrc` file, using `nvm use` command. |
+| Error message                                                                | Solution                                                                                              |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| No such built-in module: node:sqlite                                         | Use `nvm` to use a compatible version of Node.js according to `.nvmrc` file, using `nvm use` command. |
+| To use 'node:sqlite' driver, ensure you're running Node.js v22.5.0 or higher | Use `nvm` to use a compatible version of Node.js according to `.nvmrc` file, using `nvm use` command. |

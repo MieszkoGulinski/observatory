@@ -1,5 +1,4 @@
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+import "dotenv/config";
 
 export type Config = {
   serialPort: string;
@@ -12,16 +11,14 @@ export type Config = {
 };
 
 // TS types show that argv may be a Promise or a regular object, but in practice it's always a regular object.
-const argv = yargs(hideBin(process.argv)).parse() as Record<string, unknown>;
-
 const config: Config = {
-  serialPort: (argv.serialPort as string | undefined) ?? "/dev/ttyS4",
-  baudRate: (argv.baudRate as number) ?? 115200,
-  logToFile: (argv.logToFile as boolean) ?? false,
-  filesPath: (argv.filesPath as string | undefined) ?? ".",
-  httpPort: (argv.httpPort as number) ?? 8080,
-  latitude: (argv.latitude as number) ?? 54,
-  longitude: (argv.longitude as number) ?? 18,
+  serialPort: process.env.SERIAL_PORT as string,
+  baudRate: parseInt(process.env.BAUD_RATE as string, 10),
+  logToFile: (process.env.LOG_TO_FILE as string) === "true",
+  filesPath: process.env.FILES_PATH as string,
+  httpPort: parseInt(process.env.HTTP_PORT as string, 10),
+  latitude: parseFloat(process.env.LATITUDE as string),
+  longitude: parseFloat(process.env.LONGITUDE as string),
 };
 
 export default config;

@@ -15,6 +15,12 @@ To install dependencies:
 npm install
 ```
 
+To setup the database:
+
+```bash
+npm run db:push
+```
+
 To run in development mode, using `tsx`:
 
 ```bash
@@ -41,17 +47,17 @@ node dist/index.js --serialPort=/dev/ttyUSB1 --baudRate=115200 --logToFile --fil
 
 Note that to run the scheduler GUI, it needs to be built first, using appropriate npm script in the `gui` folder.
 
-## Command line arguments
+## Environment variables
 
-| Argument       | Description                                    | Default      |
-| -------------- | ---------------------------------------------- | ------------ |
-| `--serialPort` | Serial port to use                             | `/dev/ttyS4` |
-| `--baudRate`   | Serial port baud rate                          | 115200       |
-| `--logToFile`  | Log to file                                    | false        |
-| `--filesPath`  | Path to store log files, raw images, SQLite DB | `.`          |
-| `--httpPort`   | Port for the REST API                          | 8080         |
-| `--latitude`   | Latitude of the observatory                    | 54           |
-| `--longitude`  | Longitude of the observatory                   | 18           |
+| Variable      | Description                                    | Default      |
+| ------------- | ---------------------------------------------- | ------------ |
+| `SERIAL_PORT` | Serial port to use                             | `/dev/ttyS4` |
+| `BAUD_RATE`   | Serial port baud rate                          | 115200       |
+| `LOG_TO_FILE` | Log to file                                    | false        |
+| `FILES_PATH`  | Path to store log files, raw images, SQLite DB | `.`          |
+| `HTTP_PORT`   | Port for the REST API                          | 8080         |
+| `LATITUDE`    | Latitude of the observatory                    | 54           |
+| `LONGITUDE`   | Longitude of the observatory                   | 18           |
 
 ## Testing using a simulator and virtual serial port
 
