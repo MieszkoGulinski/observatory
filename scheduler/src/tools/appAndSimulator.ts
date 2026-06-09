@@ -2,6 +2,7 @@
 // Usage: npm run app-and-simulator
 
 import { spawn } from "node:child_process";
+import chalk from "chalk";
 
 // Starts virtual serial port, returns device file paths of both ports.
 const startSocat = () => {
@@ -49,21 +50,24 @@ const startSocat = () => {
 };
 
 const startSimulator = (serialPort: string) => {
-  // TODO check if shell:true is necessary
   return new Promise<void>((resolve, reject) => {
     const simulatorProcess = spawn("npm", ["run", "simulator", serialPort]);
     simulatorProcess.on("error", (error) => {
       console.error("Error starting simulator: ", error);
       reject(error);
     });
+    simulatorProcess.on("close", (code) => {
+      console.error(`Simulator process exited with code ${code}`);
+      process.exit(code ?? 0);
+    });
     simulatorProcess.on("spawn", () => {
       resolve();
     });
     simulatorProcess.stdout.on("data", (data: Buffer) => {
-      console.log("Simulator stdout: " + data.toString());
+      console.log(chalk.green(data.toString()));
     });
     simulatorProcess.stderr.on("data", (data: Buffer) => {
-      console.log("Simulator stderr: " + data.toString());
+      console.log(chalk.red(data.toString()));
     });
   });
 };
@@ -80,14 +84,18 @@ const startApp = (serialPort: string) => {
       console.error("Error starting app: ", error);
       reject(error);
     });
+    appProcess.on("close", (code) => {
+      console.error(`App process exited with code ${code}`);
+      process.exit(code ?? 0);
+    });
     appProcess.on("spawn", () => {
       resolve();
     });
     appProcess.stdout.on("data", (data: Buffer) => {
-      console.log("App stdout: " + data.toString());
+      console.log(chalk.blue(data.toString()));
     });
     appProcess.stderr.on("data", (data: Buffer) => {
-      console.log("App stderr: " + data.toString());
+      console.log(chalk.yellow(data.toString()));
     });
   });
 };

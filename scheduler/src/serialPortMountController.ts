@@ -7,10 +7,15 @@ const WATCHDOG_TIME_MS = 60000; // 1 minute
 const HEARTBEAT_INTERVAL_MS = 5000; // 5 seconds
 
 class SerialPortMountController extends EventEmitter {
-  serialPort: SerialPort;
-  timeout?: NodeJS.Timeout;
+  private serialPort: SerialPort;
+  private timeout?: NodeJS.Timeout;
+  private heartbeatMessage: string;
 
-  constructor(path: string, baudRate: number) {
+  constructor(
+    path: string,
+    baudRate: number = 115200,
+    heartbeatMessage: string = "HEARTBEAT",
+  ) {
     super();
     logger.info("Attempting to open serial port %s", path);
     try {
@@ -28,6 +33,7 @@ class SerialPortMountController extends EventEmitter {
     this.resetWatchdog();
 
     // Heartbeat to microcontroller
+    this.heartbeatMessage = heartbeatMessage;
     setInterval(() => {
       this.sendHeartbeat();
     }, HEARTBEAT_INTERVAL_MS);
@@ -52,7 +58,7 @@ class SerialPortMountController extends EventEmitter {
   };
 
   private sendHeartbeat() {
-    this.serialPort.write("HEARTBEAT\n");
+    this.serialPort.write(this.heartbeatMessage + "\n");
   }
 
   private onMessage(data: string) {

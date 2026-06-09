@@ -62,27 +62,34 @@ class MountController extends EventEmitter {
   sendCloseCommand() {
     return this.sendCommand(
       "CLOSE",
-      (sensorState: SensorState) => sensorState.roofState === "CLOSED",
+      (sensorState: SensorState) =>
+        sensorState.roofState === "CLOSED" ||
+        sensorState.roofState === "CLOSING",
     );
   }
+
   sendOpenCommand() {
     return this.sendCommand(
       "OPEN",
-      (sensorState: SensorState) => sensorState.roofState === "OPEN",
+      (sensorState: SensorState) =>
+        sensorState.roofState === "OPEN" || sensorState.roofState === "OPENING",
     );
   }
+
   sendGotoCommand(lha: number, dec: number) {
     return this.sendCommand(
       `GOTO ${this.formatAngle(lha)} ${this.formatAngle(dec)}`,
       (sensorState: SensorState) => sensorState.trackingStatus === "TRACKING",
     );
   }
+
   sendStopCommand() {
     return this.sendCommand(
       "STOP",
-      (sensorState: SensorState) => sensorState.trackingStatus !== "TRACKING",
+      (sensorState: SensorState) => sensorState.trackingStatus === "IDLE",
     );
   }
+
   private formatAngle(value: number) {
     return value.toFixed(1).replace(".", "");
   }

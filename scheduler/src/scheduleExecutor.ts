@@ -25,10 +25,7 @@ class ScheduleExecutor {
           continue;
         }
 
-        // If it's time to open the roof, send command to open the roof.
-        // If it's time to close the roof, send command to close the roof.
         // Note that if the microcontroller detects unsuitable conditions, it will close the roof independently of these commands.
-        // TODO add timeouts using Promise.race so that we can handle potential hangs
 
         const { isDay, isNight } = isDayNight();
         const { roofState, conditionsSuitableForObservation: openingAllowed } =
@@ -68,6 +65,7 @@ class ScheduleExecutor {
 
         if (!task) {
           await this.mountControllerClient.sendStopCommand();
+          await delay(POLLING_INTERVAL);
           continue;
         }
 
