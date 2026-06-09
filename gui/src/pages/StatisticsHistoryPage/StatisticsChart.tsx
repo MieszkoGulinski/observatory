@@ -1,6 +1,6 @@
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import { type StatisticsRow } from "./types";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import dayjs from "dayjs";
 
 type StatisticsChartProps = {
@@ -33,9 +33,11 @@ function StatisticsChart({
             dataKey="timestamp"
             tickFormatter={(value) => dayjs(value).format("HH:mm:ss")}
           />
+          <YAxis dataKey={dataKey} />
           <Line
             dataKey={dataKey}
-            type="monotone"
+            type="linear"
+            isAnimationActive={false}
             stroke={color}
             strokeWidth={2}
             dot={false}

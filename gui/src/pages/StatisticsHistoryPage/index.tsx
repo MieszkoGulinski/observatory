@@ -30,12 +30,68 @@ function StatisticsHistoryPage() {
       {isLoading ? <>loading...</> : null}
       {error ? <>error</> : null}
       {data ? (
-        <StatisticsChart
-          data={data}
-          dataKey="cameraTemperature"
-          label="Camera temperature"
-          color="#ff0000"
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <StatisticsChart
+            data={data}
+            dataKey="cameraTemperature"
+            label="Camera temperature"
+            color="#ff0000"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="airTemperature"
+            label="Air temperature"
+            color="#ff7300"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="humidity"
+            label="Humidity"
+            color="#387908"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="batteryVoltage"
+            label="Battery voltage"
+            color="#8884d8"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="uptime"
+            label="Uptime"
+            color="#0088fe"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="freeMemory"
+            label="Free memory"
+            color="#00c49f"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="totalMemory"
+            label="Total memory"
+            color="#ffbb28"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="load1"
+            label="Load 1"
+            color="#ff8042"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="load5"
+            label="Load 5"
+            color="#a4de6c"
+          />
+          <StatisticsChart
+            data={data}
+            dataKey="load15"
+            label="Load 15"
+            color="#d0ed57"
+          />
+        </div>
       ) : null}
     </>
   );

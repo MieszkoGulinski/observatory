@@ -25,11 +25,12 @@ class Simulator {
     const dec = -10;
     const airTemperature = -15;
     const cameraTemperature = -5;
+    const skyTemperature = -50;
     const humidity = 65;
     const batteryVoltage = 12;
 
     this.serialPort.write(
-      `OPEN COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${humidity} ${batteryVoltage * 10}\n`,
+      `OPEN COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
     );
   }
 

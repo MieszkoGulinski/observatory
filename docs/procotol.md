@@ -38,7 +38,7 @@ Similarly to messages sent from scheduler to microcontroller, words are separate
 Example:
 
 ```
-OPEN COND_OK TRACKING 450 -100 -15 -5 65 127
+OPEN COND_OK TRACKING 450 -100 -15 -5 -5 65 127
 ```
 
 meaning:
@@ -50,5 +50,6 @@ meaning:
 - DEC = -10 deg
 - air temperature = -15 C
 - camera temperature = -5 C
+- sky temperature = -5 C
 - humidity = 65%
 - battery voltage = 12.7 V

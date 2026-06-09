@@ -15,6 +15,7 @@ type SensorState = {
   dec: number;
   airTemperature: number;
   cameraTemperature: number;
+  skyTemperature: number;
   humidity: number;
   batteryVoltage: number;
 };
@@ -85,8 +86,9 @@ class MotorController {
       dec: parseInt(splitMessage[4]) / 10,
       airTemperature: parseInt(splitMessage[5]),
       cameraTemperature: parseInt(splitMessage[6]),
-      humidity: parseInt(splitMessage[7]),
-      batteryVoltage: parseInt(splitMessage[8]) / 10,
+      skyTemperature: parseInt(splitMessage[7]),
+      humidity: parseInt(splitMessage[8]),
+      batteryVoltage: parseInt(splitMessage[9]) / 10,
     };
     this.resetWatchdog();
   }
