@@ -35,14 +35,12 @@ class ScheduleExecutor {
           this.mountControllerClient.lastSensorState;
         if (roofState === "CLOSED" && openingAllowed && isNight) {
           logger.info("Submitting command to open roof");
-          this.mountControllerClient.sendOpenCommand();
-          await delay(POLLING_INTERVAL);
+          await this.mountControllerClient.sendOpenCommand();
           continue;
         }
         if ((roofState === "OPEN" || roofState === "OPENING") && isDay) {
           logger.info("Submitting command to close roof");
-          this.mountControllerClient.sendCloseCommand();
-          await delay(POLLING_INTERVAL);
+          await this.mountControllerClient.sendCloseCommand();
           continue;
         }
 
@@ -69,8 +67,7 @@ class ScheduleExecutor {
           .all();
 
         if (!task) {
-          this.mountControllerClient.sendStopCommand();
-          await delay(POLLING_INTERVAL);
+          await this.mountControllerClient.sendStopCommand();
           continue;
         }
 

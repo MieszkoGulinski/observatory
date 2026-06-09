@@ -1,3 +1,4 @@
+import EventEmitter from "node:events";
 import type SerialPortMountController from "./serialPortMountController.ts";
 
 type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
@@ -23,11 +24,13 @@ type SensorState = {
 // For readability, code is split into two layers, one for communicating with
 // UART, one for exposing API relevant to the microcontroller functionality.
 
-class MountController {
+class MountController extends EventEmitter {
   serialPortMountController: SerialPortMountController;
   lastSensorState: SensorState | null = null;
+  isRunningCommand: boolean = false;
 
   constructor(serialPortMountController: SerialPortMountController) {
+    super();
     this.serialPortMountController = serialPortMountController;
     this.serialPortMountController.on("message", this.onMessage);
   }
@@ -52,25 +55,72 @@ class MountController {
       humidity: parseInt(splitMessage[8]),
       batteryVoltage: parseInt(splitMessage[9]) / 10,
     };
+
+    this.emit("sensorState", this.lastSensorState);
   };
 
   sendCloseCommand() {
-    this.sendCommand("CLOSE");
+    return this.sendCommand(
+      "CLOSE",
+      (sensorState: SensorState) => sensorState.roofState === "CLOSED",
+    );
   }
   sendOpenCommand() {
-    this.sendCommand("OPEN");
+    return this.sendCommand(
+      "OPEN",
+      (sensorState: SensorState) => sensorState.roofState === "OPEN",
+    );
   }
   sendGotoCommand(lha: number, dec: number) {
-    this.sendCommand(`GOTO ${this.formatAngle(lha)} ${this.formatAngle(dec)}`);
+    return this.sendCommand(
+      `GOTO ${this.formatAngle(lha)} ${this.formatAngle(dec)}`,
+      (sensorState: SensorState) => sensorState.trackingStatus === "TRACKING",
+    );
   }
   sendStopCommand() {
-    this.sendCommand("STOP");
+    return this.sendCommand(
+      "STOP",
+      (sensorState: SensorState) => sensorState.trackingStatus !== "TRACKING",
+    );
   }
   private formatAngle(value: number) {
     return value.toFixed(1).replace(".", "");
   }
-  private sendCommand(command: string) {
-    this.serialPortMountController.sendCommand(command);
+
+  // TODO: currently we rely on external logic to never submit commands when another command is running.
+  // It may be more robust to create a queue instead.
+  private sendCommand(
+    command: string,
+    isCommandAccepted: (sensorState: SensorState) => boolean,
+    commandTimeoutMs: number = 30000,
+  ): Promise<void> {
+    if (this.isRunningCommand) {
+      throw new Error(
+        "Command already running - running multiple commands concurrently is not supported.",
+      );
+    }
+    this.isRunningCommand = true;
+
+    return new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.isRunningCommand = false;
+        reject(new Error("Command timeout"));
+      }, commandTimeoutMs);
+
+      const stateListener = (sensorState: SensorState) => {
+        if (!isCommandAccepted(sensorState)) return;
+
+        clearTimeout(timeout);
+        this.isRunningCommand = false;
+        this.removeListener("sensorState", stateListener);
+
+        resolve();
+      };
+
+      this.on("sensorState", stateListener);
+
+      this.serialPortMountController.sendCommand(command);
+    });
   }
 }
 
