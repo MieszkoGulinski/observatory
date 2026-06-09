@@ -3,24 +3,26 @@
 // where /dev/pts/9 is the serial port to use in the simulator
 
 import { DelimiterParser, SerialPort } from "serialport";
+import type { RoofState } from "../mountController.ts";
 
 const INTERVAL_MS = 5000;
 
 const portName = process.argv[2];
-console.log("Starting simulator");
-console.log("Port name: ", portName);
+console.log("Starting simulator on port name ", portName);
 
 class Simulator {
   serialPort: SerialPort;
+  status: RoofState;
 
   constructor(path: string) {
     this.serialPort = new SerialPort({
       path,
       baudRate: 115200,
     });
+    this.status = "OPEN";
   }
 
-  submitMessage() {
+  submitMessage = () => {
     const lha = 45;
     const dec = -10;
     const airTemperature = -15;
@@ -30,15 +32,13 @@ class Simulator {
     const batteryVoltage = 12;
 
     this.serialPort.write(
-      `OPEN COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
+      `${this.status} COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
     );
-  }
+  };
 
   run() {
     try {
-      setInterval(() => {
-        this.submitMessage();
-      }, INTERVAL_MS);
+      setInterval(this.submitMessage, INTERVAL_MS);
 
       const parser = this.serialPort.pipe(
         new DelimiterParser({ delimiter: "\n" }),
@@ -50,9 +50,16 @@ class Simulator {
     }
   }
 
-  onMessage(data: Buffer) {
-    console.log(data.toString());
-  }
+  onMessage = (data: Buffer) => {
+    const message = data.toString();
+
+    if (message === "CLOSE") {
+      this.status = "CLOSED";
+    }
+    if (message === "OPEN") {
+      this.status = "OPEN";
+    }
+  };
 }
 
 const simulator = new Simulator(portName);

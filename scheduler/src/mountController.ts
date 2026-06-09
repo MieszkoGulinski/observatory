@@ -1,8 +1,9 @@
 import EventEmitter from "node:events";
 import type SerialPortMountController from "./serialPortMountController.ts";
+import logger from "./logger.ts";
 
-type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
-type TrackingStatus = "TRACKING" | "SETTING" | "IDLE";
+export type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
+export type TrackingStatus = "TRACKING" | "SETTING" | "IDLE";
 type SensorState = {
   roofState: RoofState;
   conditionsSuitableForObservation: boolean;
@@ -38,6 +39,7 @@ class MountController extends EventEmitter {
   // See docs/protocol.md for message format
   // Example message: OPEN COND_OK TRACKING 450 -100 -15 -5 -50 65 127
   onMessage = (message: string) => {
+    console.log(message);
     const splitMessage = message.split(" ");
     const roofStatusWord = splitMessage[0];
     const weatherStatusWord = splitMessage[1];
@@ -101,6 +103,8 @@ class MountController extends EventEmitter {
     isCommandAccepted: (sensorState: SensorState) => boolean,
     commandTimeoutMs: number = 30000,
   ): Promise<void> {
+    logger.info(`Submitting command ${command}`);
+
     if (this.isRunningCommand) {
       throw new Error(
         "Command already running - running multiple commands concurrently is not supported.",
@@ -121,6 +125,7 @@ class MountController extends EventEmitter {
         this.isRunningCommand = false;
         this.removeListener("sensorState", stateListener);
 
+        logger.info(`Command ${command} succesfully executed`);
         resolve();
       };
 

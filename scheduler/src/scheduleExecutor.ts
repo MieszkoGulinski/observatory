@@ -28,9 +28,14 @@ class ScheduleExecutor {
         // Note that if the microcontroller detects unsuitable conditions, it will close the roof independently of these commands.
 
         const { isDay, isNight } = isDayNight();
-        const { roofState, conditionsSuitableForObservation: openingAllowed } =
+        const { roofState, conditionsSuitableForObservation } =
           this.mountControllerClient.lastSensorState;
-        if (roofState === "CLOSED" && openingAllowed && isNight) {
+
+        if (
+          roofState === "CLOSED" &&
+          conditionsSuitableForObservation &&
+          isNight
+        ) {
           logger.info("Submitting command to open roof");
           await this.mountControllerClient.sendOpenCommand();
           continue;
