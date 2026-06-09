@@ -1,14 +1,14 @@
 import os from "node:os";
 import db from "./db/index.ts";
 import { statistics, type InsertStatistics } from "./db/schema.ts";
-import MotorController from "./motorController.ts";
+import MountController from "./mountController.ts";
 
 const STATUS_UPDATE_INTERVAL_MS = 20 * 60 * 1000; // 20 minutes
 
 class StatisticsSaver {
-  private motorController: MotorController;
-  constructor(motorController: MotorController) {
-    this.motorController = motorController;
+  private mountControllerClient: MountController;
+  constructor(mountControllerClient: MountController) {
+    this.mountControllerClient = mountControllerClient;
   }
 
   interval: NodeJS.Timeout | null = null;
@@ -39,7 +39,7 @@ class StatisticsSaver {
   }
 
   getStatistics(): InsertStatistics | null {
-    const sensorState = this.motorController.lastSensorState;
+    const sensorState = this.mountControllerClient.lastSensorState;
     if (sensorState === null) return null;
 
     const osStats = this.getOSStats();

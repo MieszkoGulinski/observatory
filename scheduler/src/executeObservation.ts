@@ -5,11 +5,11 @@ import {
   type ObservationScheduleItem,
 } from "./db/schema.ts";
 import logger from "./logger.ts";
-import type MotorController from "./motorController.ts";
+import type MountController from "./mountController.ts";
 
 export default async function executeObservation(
   task: ObservationScheduleItem,
-  motorController: MotorController,
+  mountControllerClient: MountController,
 ) {
   try {
     logger.info("Starting observation %d", task.id);
@@ -17,13 +17,13 @@ export default async function executeObservation(
     // TODO submit command to microcontroller to rotate the mount to target coordinates
     // TODO take a picture using gphoto2 and download it to the disk
 
-    // Simulate moving the mount to target coordinates
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // TODO convert ra to lha
+    mountControllerClient.sendGotoCommand(task.ra, task.dec);
 
     while (task.endDate < Date.now()) {
       if (
-        !motorController.lastSensorState ||
-        !motorController.lastSensorState.conditionsSuitableForObservation
+        !mountControllerClient.lastSensorState ||
+        !mountControllerClient.lastSensorState.conditionsSuitableForObservation
       ) {
         break; // do not continue the observation if conditions are not suitable
       }

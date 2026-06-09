@@ -1,5 +1,5 @@
 import logger from "./logger.ts";
-import MotorController from "./motorController.js";
+import MountController from "./mountController.ts";
 import { delay } from "./utils.ts";
 import db from "./db/index.ts";
 import { observationsSchedule } from "./db/schema.ts";
@@ -10,17 +10,17 @@ import { isDayNight } from "./calculateDayNight.ts";
 const POLLING_INTERVAL = 5000; // 5 s
 
 class ScheduleExecutor {
-  motorController: MotorController;
+  mountControllerClient: MountController;
 
-  constructor(motorController: MotorController) {
-    this.motorController = motorController;
+  constructor(mountControllerClient: MountController) {
+    this.mountControllerClient = mountControllerClient;
   }
 
   async run() {
     try {
       while (true) {
         // Initial wait for MCU status data
-        if (this.motorController.lastSensorState === null) {
+        if (this.mountControllerClient.lastSensorState === null) {
           await delay(POLLING_INTERVAL);
           continue;
         }
@@ -32,16 +32,16 @@ class ScheduleExecutor {
 
         const { isDay, isNight } = isDayNight();
         const { roofState, conditionsSuitableForObservation: openingAllowed } =
-          this.motorController.lastSensorState;
+          this.mountControllerClient.lastSensorState;
         if (roofState === "CLOSED" && openingAllowed && isNight) {
           logger.info("Submitting command to open roof");
-          this.motorController.sendOpenCommand();
+          this.mountControllerClient.sendOpenCommand();
           await delay(POLLING_INTERVAL);
           continue;
         }
         if ((roofState === "OPEN" || roofState === "OPENING") && isDay) {
           logger.info("Submitting command to close roof");
-          this.motorController.sendCloseCommand();
+          this.mountControllerClient.sendCloseCommand();
           await delay(POLLING_INTERVAL);
           continue;
         }
@@ -69,12 +69,13 @@ class ScheduleExecutor {
           .all();
 
         if (!task) {
+          this.mountControllerClient.sendStopCommand();
           await delay(POLLING_INTERVAL);
           continue;
         }
 
         // Execute the task.
-        await executeObservation(task, this.motorController);
+        await executeObservation(task, this.mountControllerClient);
       }
     } catch (error) {
       // All errors propagated to this level are critical and will lead to process termination.

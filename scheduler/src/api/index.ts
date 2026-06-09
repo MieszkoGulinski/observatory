@@ -8,12 +8,12 @@ import {
   handleUpdateObservation,
   handleDeleteObservation,
 } from "./apiHandlers.ts";
-import type MotorController from "../motorController.ts";
+import type MountController from "../mountController.ts";
 import type StatisticsSaver from "../statisticsSaver.ts";
 import cors from "@fastify/cors";
 
 export const createApiServer = async (
-  motorController: MotorController,
+  mountControllerClient: MountController,
   statisticsSaver: StatisticsSaver,
 ) => {
   const app = Fastify({ logger: false });
@@ -30,7 +30,7 @@ export const createApiServer = async (
   app.patch("/schedule/:id", handleUpdateObservation);
   app.delete("/schedule/:id", handleDeleteObservation);
   app.get("/current-status", () =>
-    handleGetStatus(motorController, statisticsSaver),
+    handleGetStatus(mountControllerClient, statisticsSaver),
   );
   app.get("/statistics", handleGetStatisticsHistory);
 

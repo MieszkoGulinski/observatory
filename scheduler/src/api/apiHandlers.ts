@@ -4,7 +4,7 @@ import db from "../db/index.ts";
 import { observationsSchedule, statistics } from "../db/schema.ts";
 import { and, gte, lte } from "drizzle-orm";
 import type StatisticsSaver from "../statisticsSaver.ts";
-import type MotorController from "../motorController.ts";
+import type MountController from "../mountController.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
 
@@ -22,7 +22,10 @@ export function handleGetObservationTimes(request: FastifyRequest) {
 }
 
 // List planned observations in the given time range
-export function handleGetSchedule(request: FastifyRequest, reply: FastifyReply) {
+export function handleGetSchedule(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const { start, end } = request.query as {
     start: string;
     end: string;
@@ -67,17 +70,20 @@ export async function handleDeleteObservation(request: FastifyRequest) {
 // Includes current time in UNIX timestamp in ms - may be necessary for the GUI
 // to avoid clock drift
 export async function handleGetStatus(
-  motorController: MotorController,
+  mountControllerClient: MountController,
   statisticsSaver: StatisticsSaver,
 ) {
   return {
     time: Date.now(),
     osStats: statisticsSaver.getOSStats(),
-    controllerState: motorController.lastSensorState,
+    controllerState: mountControllerClient.lastSensorState,
   };
 }
 
-export async function handleGetStatisticsHistory(request: FastifyRequest, reply: FastifyReply) {
+export async function handleGetStatisticsHistory(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const { start, end } = request.query as {
     start: string;
     end: string;
