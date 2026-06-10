@@ -24,8 +24,9 @@ export function getSunriseSunsetTimesByDay(day: Date): SunriseSunsetTimes {
 // (in addition to auto-closing by the microcontroller on detecting bad weather),
 // and we want to be able to take flat frames during twilight,
 // we use sunrise/sunset times (not twilight times) to determine when to open/close the roof.
-export function isDayNight() {
-  const now = new Date();
+export function isDayNight(now?: Date) {
+  if (!now) now = new Date();
+
   const { sunrise, sunset } = getSunriseSunsetTimesByDay(now);
   if (!sunrise || !sunset) {
     // TODO: this will be valid if the observer is beyond the Arctic/Antarctic circle

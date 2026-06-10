@@ -6,6 +6,8 @@ import {
 import logger from "../../logger.ts";
 import type MountController from "../mountController/index.ts";
 import db from "../../db/index.ts";
+import getLHA from "../../calculations/getLHA.ts";
+import config from "../../config.ts";
 
 /**
  * Executes a single observation task, creating multiple exposures if needed, as long as the conditions are suitable for observation.
@@ -20,8 +22,8 @@ export default async function executeObservation(
 
     // TODO take a picture using gphoto2 and download it to the disk
 
-    // TODO convert ra to lha
-    await mountControllerClient.sendGotoCommand(task.ra, task.dec);
+    const lha = getLHA(new Date(), config.longitude, task.ra);
+    await mountControllerClient.sendGotoCommand(lha, task.dec);
 
     while (task.endDate < Date.now()) {
       if (
