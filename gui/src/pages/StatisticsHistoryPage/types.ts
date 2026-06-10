@@ -1,5 +1,5 @@
 // TODO share the same types in scheduler and React frontend (both use TypeScript)
-export type StatisticsRow = {
+export type StatisticsRowFromServer = {
   id: number;
   timestamp: number;
 
@@ -16,4 +16,8 @@ export type StatisticsRow = {
   load1: number;
   load5: number;
   load15: number;
+};
+
+export type StatisticsRow = StatisticsRowFromServer & {
+  usedRAMPercent: number;
 };

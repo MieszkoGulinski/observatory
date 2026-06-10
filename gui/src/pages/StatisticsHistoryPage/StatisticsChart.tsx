@@ -32,6 +32,7 @@ function StatisticsChart({
           <XAxis
             dataKey="timestamp"
             tickFormatter={(value) => dayjs(value).format("HH:mm:ss")}
+            type="number"
           />
           <YAxis dataKey={dataKey} />
           <Line

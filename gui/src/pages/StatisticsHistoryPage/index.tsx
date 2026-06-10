@@ -3,7 +3,7 @@ import { fetcher } from "@/utils";
 import dayjs from "dayjs";
 import { useState } from "react";
 import useSWR from "swr";
-import { type StatisticsRow } from "./types";
+import { type StatisticsRowFromServer } from "./types";
 import StatisticsChart from "./StatisticsChart";
 
 function StatisticsHistoryPage() {
@@ -11,10 +11,22 @@ function StatisticsHistoryPage() {
     dayjs().startOf("day").valueOf(),
   );
   const searchEndTime = dayjs(searchStartTime).add(1, "d").valueOf();
-  const { data, error, isLoading } = useSWR<StatisticsRow[]>(
+  const {
+    data: dataFromServer,
+    error,
+    isLoading,
+  } = useSWR<StatisticsRowFromServer[]>(
     `/statistics?start=${searchStartTime}&end=${searchEndTime}`,
     fetcher,
   );
+
+  const data = dataFromServer
+    ? dataFromServer.map((row) => ({
+        ...row,
+        usedRAMPercent:
+          (100 * (row.totalMemory - row.freeMemory)) / row.totalMemory,
+      }))
+    : null;
 
   return (
     <>
@@ -63,32 +75,14 @@ function StatisticsHistoryPage() {
           />
           <StatisticsChart
             data={data}
-            dataKey="freeMemory"
-            label="Free memory"
+            dataKey="usedRAMPercent"
+            label="Used RAM"
             color="#00c49f"
           />
           <StatisticsChart
             data={data}
-            dataKey="totalMemory"
-            label="Total memory"
-            color="#ffbb28"
-          />
-          <StatisticsChart
-            data={data}
-            dataKey="load1"
-            label="Load 1"
-            color="#ff8042"
-          />
-          <StatisticsChart
-            data={data}
-            dataKey="load5"
-            label="Load 5"
-            color="#a4de6c"
-          />
-          <StatisticsChart
-            data={data}
             dataKey="load15"
-            label="Load 15"
+            label="Load avg in 15 min"
             color="#d0ed57"
           />
         </div>
