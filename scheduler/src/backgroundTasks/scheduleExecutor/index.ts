@@ -5,7 +5,7 @@ import db from "../../db/index.ts";
 import { observationsSchedule } from "../../db/schema.ts";
 import { and, gt, lte } from "drizzle-orm";
 import executeObservation from "./executeObservation.ts";
-import { isDayNight } from "../../calculateDayNight.ts";
+import { isDayNight } from "../../calculations/dayNight.ts";
 
 const POLLING_INTERVAL = 5000; // 5 s
 

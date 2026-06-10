@@ -5,7 +5,7 @@ import {
   type TwilightTimes,
 } from "sunrise-sunset-js";
 import dayjs from "dayjs";
-import config from "./config.ts";
+import config from "../config.ts";
 
 type TwilightAndSunTimes = TwilightTimes & { sunrise: Date; sunset: Date };
 
@@ -38,17 +38,3 @@ export function isDayNight() {
     isNight: now < sunrise || now > sunset,
   };
 }
-
-// Calculate day/night and twilight times for the specified period of time.
-// This is used by the GUI to plan observations.
-export const getObservationTimesForUpcomingDays = (
-  numberOfDays: number = 365,
-  offsetDays: number = 0,
-): Record<string, TwilightAndSunTimes> => {
-  const observationTimes: Record<string, TwilightAndSunTimes> = {};
-  for (let i = 0; i < numberOfDays; i++) {
-    const day = dayjs().add(i + offsetDays, "day");
-    observationTimes[day.format("YYYY-MM-DD")] = getTwilightByDay(day.toDate());
-  }
-  return observationTimes;
-};

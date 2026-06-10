@@ -18,11 +18,10 @@ export default async function executeObservation(
   try {
     logger.info("Starting observation %d", task.id);
 
-    // TODO submit command to microcontroller to rotate the mount to target coordinates
     // TODO take a picture using gphoto2 and download it to the disk
 
     // TODO convert ra to lha
-    mountControllerClient.sendGotoCommand(task.ra, task.dec);
+    await mountControllerClient.sendGotoCommand(task.ra, task.dec);
 
     while (task.endDate < Date.now()) {
       if (

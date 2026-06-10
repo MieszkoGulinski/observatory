@@ -30,10 +30,10 @@ Also, when the microcontroller does not receive heartbeat for specified time (60
 
 Similarly to messages sent from scheduler to microcontroller, words are separated by spaces and the message is terminated with a newline character.
 
-- First word indicates status of the roof, can be OPEN, OPENING, CLOSED, CLOSING
-- Second word indicates if weather conditions are good for observation (no rain/snow), can be COND_OK or COND_BAD.
-- Third word indicates tracking status, can be TRACKING (when pointing at the specified location), SETTING (during rotating towards the specified location) or IDLE.
-- Next are current position of the mount, in the same format as in the GOTO command, air and camera temperatures in Celsius, humidity in percent and battery voltage in multiples of 0.1 V.
+- First word indicates status of the roof, can be `OPEN`, `OPENING`, `CLOSED`, `CLOSING`
+- Second word indicates if weather conditions are good for observation (no rain/snow), can be `COND_OK` or `COND_BAD`.
+- Third word indicates tracking status, can be `TRACKING` (when pointing at the specified location), `SETTING` (during rotating towards the specified location) or `IDLE`.
+- Next are current position of the mount, in the same format as in the `GOTO` command, air and camera temperatures in Celsius, humidity in percent and battery voltage in multiples of 0.1 V.
 
 Example:
 

@@ -1,6 +1,5 @@
 import Fastify from "fastify";
 import {
-  handleGetObservationTimes,
   handleGetSchedule,
   handleGetStatus,
   handleGetStatisticsHistory,
@@ -24,7 +23,6 @@ export const createApiServer = async (
     origin: "*",
   });
 
-  app.get("/observation-times", handleGetObservationTimes);
   app.get("/schedule", handleGetSchedule);
   app.post("/schedule", handleScheduleObservation);
   app.patch("/schedule/:id", handleUpdateObservation);

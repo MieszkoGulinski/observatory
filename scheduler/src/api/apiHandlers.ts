@@ -1,5 +1,4 @@
 import { type FastifyRequest, type FastifyReply } from "fastify";
-import { getObservationTimesForUpcomingDays } from "../calculateDayNight.ts";
 import db from "../db/index.ts";
 import { observationsSchedule, statistics } from "../db/schema.ts";
 import { and, gte, lte } from "drizzle-orm";
@@ -7,19 +6,6 @@ import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
 import type MountController from "../backgroundTasks/mountController/index.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
-
-// List observation times
-export function handleGetObservationTimes(request: FastifyRequest) {
-  const { numberOfDays, offsetDays } = request.query as {
-    numberOfDays?: string;
-    offsetDays?: string;
-  };
-
-  return getObservationTimesForUpcomingDays(
-    numberOfDays ? parseInt(numberOfDays, 10) : undefined,
-    offsetDays ? parseInt(offsetDays, 10) : undefined,
-  );
-}
 
 // List planned observations in the given time range
 export function handleGetSchedule(

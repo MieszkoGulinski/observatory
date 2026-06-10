@@ -1,5 +1,5 @@
 import { createBackup } from "../db/index.ts";
-import { isDayNight } from "../calculateDayNight.ts";
+import { isDayNight } from "../calculations/dayNight.ts";
 import logger from "../logger.ts";
 
 const BACKUP_POLL_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
