@@ -1,4 +1,5 @@
 import { sqliteTable, integer, real, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createUpdateSchema } from "drizzle-orm/zod";
 
 // Define all tables here
 
@@ -21,6 +22,8 @@ export const observationsSchedule = sqliteTable("observations_schedule", {
 // Later it may be possible to e.g. control multiple telescopes independently
 
 export type ObservationScheduleItem = typeof observationsSchedule.$inferSelect;
+export const insertObservationSchema = createInsertSchema(observationsSchedule);
+export const updateObservationSchema = createUpdateSchema(observationsSchedule);
 
 // Individual exposures performed as part of observations
 export const exposure = sqliteTable("exposure", {

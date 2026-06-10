@@ -1,7 +1,12 @@
 import { type FastifyRequest, type FastifyReply } from "fastify";
 import db from "../db/index.ts";
-import { observationsSchedule, statistics } from "../db/schema.ts";
-import { and, gte, lte } from "drizzle-orm";
+import {
+  insertObservationSchema,
+  observationsSchedule,
+  statistics,
+  updateObservationSchema,
+} from "../db/schema.ts";
+import { and, gte, lte, eq } from "drizzle-orm";
 import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
 import type MountController from "../backgroundTasks/mountController/index.ts";
 
@@ -36,21 +41,102 @@ export function handleGetSchedule(
 }
 
 // Schedule a new observation.
-export async function handleScheduleObservation(request: FastifyRequest) {
-  // TODO complete
-  return {};
+export async function handleScheduleObservation(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const parsed = insertObservationSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply
+      .status(400)
+      .send({ error: "Invalid input", details: parsed.error.issues });
+  }
+
+  const result = db
+    .insert(observationsSchedule)
+    .values(parsed.data)
+    .returning()
+    .all();
+
+  return result[0];
 }
 
 // Update an observation in the schedule.
-export async function handleUpdateObservation(request: FastifyRequest) {
-  // TODO complete
-  return {};
+export async function handleUpdateObservation(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const { id } = request.params as { id: string };
+  const observationId = parseInt(id, 10);
+  if (isNaN(observationId)) {
+    return reply.status(400).send({ error: "Invalid observation ID" });
+  }
+
+  const parsed = updateObservationSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply
+      .status(400)
+      .send({ error: "Invalid input", details: parsed.error.issues });
+  }
+
+  const existing = db
+    .select()
+    .from(observationsSchedule)
+    .where(eq(observationsSchedule.id, observationId))
+    .get();
+
+  if (!existing) {
+    return reply.status(404).send({ error: "Observation not found" });
+  }
+
+  if (existing.startDate < Date.now()) {
+    return reply.status(400).send({
+      error:
+        "Cannot update an observation that has already started or is in the past",
+    });
+  }
+
+  db.update(observationsSchedule)
+    .set(parsed.data)
+    .where(eq(observationsSchedule.id, observationId))
+    .run();
+
+  return { success: true };
 }
 
 // Delete an observation from the schedule.
-export async function handleDeleteObservation(request: FastifyRequest) {
-  // TODO complete
-  return {};
+export async function handleDeleteObservation(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const { id } = request.params as { id: string };
+  const observationId = parseInt(id, 10);
+  if (isNaN(observationId)) {
+    return reply.status(400).send({ error: "Invalid observation ID" });
+  }
+
+  const existing = db
+    .select()
+    .from(observationsSchedule)
+    .where(eq(observationsSchedule.id, observationId))
+    .get();
+
+  if (!existing) {
+    return reply.status(404).send({ error: "Observation not found" });
+  }
+
+  if (existing.startDate < Date.now()) {
+    return reply.status(400).send({
+      error:
+        "Cannot delete an observation that has already started or is in the past",
+    });
+  }
+
+  db.delete(observationsSchedule)
+    .where(eq(observationsSchedule.id, observationId))
+    .execute();
+
+  return { success: true };
 }
 
 // Includes current time in UNIX timestamp in ms - may be necessary for the GUI
