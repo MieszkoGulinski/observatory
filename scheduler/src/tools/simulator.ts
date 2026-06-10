@@ -6,7 +6,7 @@ import { DelimiterParser, SerialPort } from "serialport";
 import type {
   RoofState,
   TrackingStatus,
-} from "../backgroundTasks/mountController/index.ts";
+} from "../backgroundTasks/mountController/types.ts";
 
 const MESSAGE_INTERVAL_MS = 5000;
 const SIMULATED_ROOF_RESPONSE_DELAY_MS = 5000;

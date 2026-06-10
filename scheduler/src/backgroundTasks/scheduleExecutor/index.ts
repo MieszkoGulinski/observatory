@@ -1,5 +1,5 @@
 import logger from "../../logger.ts";
-import MountController from "../mountController/index.ts";
+import type MountController from "../mountController/index.ts";
 import { delay } from "../../utils.ts";
 import db from "../../db/index.ts";
 import { observationsSchedule } from "../../db/schema.ts";
@@ -8,6 +8,13 @@ import executeObservation from "./executeObservation.ts";
 import { isDayNight } from "../../calculateDayNight.ts";
 
 const POLLING_INTERVAL = 5000; // 5 s
+
+/**
+ * Executes the observation schedule by reading tasks from the database and executing them, and opening/closing the roof as needed.
+ *
+ * This is effectively the main loop of the application. Currently it's the only place where it's safe to submit commands to the mount controller,
+ * as no more than one command can be executed concurrently.
+ */
 
 class ScheduleExecutor {
   mountControllerClient: MountController;
