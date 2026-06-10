@@ -28,7 +28,7 @@ Scheduler has the following functionalities:
 - Communication with the motor controller via serial port
 - Downloading acquired data
 
-The scheduler Node.js process does not serve the web UI. While the UI is served at port 5173, the scheduler REST API listens on port 8080. The `scheduler` folder contains only the Node.js scheduler and related files. The web UI code (React) is located in the `gui` folder.
+The scheduler Node.js process does not serve the web UI. While the UI is served at port 5173, the scheduler REST API listens on port 8080. The `scheduler` folder contains only the Node.js scheduler process itself. The web UI code (React) is located in the `gui` folder.
 
 ## Troubleshooting
 

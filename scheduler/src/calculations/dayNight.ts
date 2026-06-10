@@ -1,21 +1,15 @@
-import {
-  getSunrise,
-  getSunset,
-  getTwilight,
-  type TwilightTimes,
-} from "sunrise-sunset-js";
+import { getSunrise, getSunset } from "sunrise-sunset-js";
 import dayjs from "dayjs";
 import config from "../config.ts";
 
-type TwilightAndSunTimes = TwilightTimes & { sunrise: Date; sunset: Date };
+type SunriseSunsetTimes = { sunrise: Date | null; sunset: Date | null };
 
-const cache = new Map<string, TwilightAndSunTimes>();
+const cache = new Map<string, SunriseSunsetTimes>();
 
-export function getTwilightByDay(day: Date): TwilightAndSunTimes {
+export function getSunriseSunsetTimesByDay(day: Date): SunriseSunsetTimes {
   const dayStr = dayjs(day).format("YYYY-MM-DD");
   if (!cache.has(dayStr)) {
     cache.set(dayStr, {
-      ...getTwilight(config.latitude, config.longitude, day),
       sunrise: getSunrise(config.latitude, config.longitude, day),
       sunset: getSunset(config.latitude, config.longitude, day),
     });
@@ -32,7 +26,12 @@ export function getTwilightByDay(day: Date): TwilightAndSunTimes {
 // we use sunrise/sunset times (not twilight times) to determine when to open/close the roof.
 export function isDayNight() {
   const now = new Date();
-  const { sunrise, sunset } = getTwilightByDay(now);
+  const { sunrise, sunset } = getSunriseSunsetTimesByDay(now);
+  if (!sunrise || !sunset) {
+    // TODO: this will be valid if the observer is beyond the Arctic/Antarctic circle
+    // (has polar day/night) - we should handle this case too
+    return { isDay: false, isNight: false };
+  }
   return {
     isDay: now >= sunrise && now <= sunset,
     isNight: now < sunrise || now > sunset,
