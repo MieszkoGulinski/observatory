@@ -3,7 +3,7 @@
 // where /dev/pts/9 is the serial port to use in the simulator
 
 import { DelimiterParser, SerialPort } from "serialport";
-import type { RoofState } from "../mountController.ts";
+import type { RoofState, TrackingStatus } from "../mountController.ts";
 
 const INTERVAL_MS = 5000;
 
@@ -12,14 +12,16 @@ console.log("Starting simulator on port name ", portName);
 
 class Simulator {
   serialPort: SerialPort;
-  status: RoofState;
+  roofState: RoofState;
+  trackingStatus: TrackingStatus;
 
   constructor(path: string) {
     this.serialPort = new SerialPort({
       path,
       baudRate: 115200,
     });
-    this.status = "OPEN";
+    this.roofState = "OPEN";
+    this.trackingStatus = "IDLE";
   }
 
   submitMessage = () => {
@@ -32,7 +34,7 @@ class Simulator {
     const batteryVoltage = 12;
 
     this.serialPort.write(
-      `${this.status} COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
+      `${this.roofState} COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
     );
   };
 
@@ -53,11 +55,31 @@ class Simulator {
   onMessage = (data: Buffer) => {
     const message = data.toString();
 
+    // Simulate closing/opening taking 5 seconds
     if (message === "CLOSE") {
-      this.status = "CLOSED";
+      this.roofState = "CLOSING";
+      setTimeout(() => {
+        this.roofState = "CLOSED";
+      }, 5000);
     }
     if (message === "OPEN") {
-      this.status = "OPEN";
+      this.roofState = "OPENING";
+      setTimeout(() => {
+        this.roofState = "OPEN";
+      }, 5000);
+    }
+
+    // Simulate pointing to a new LHA/DEC
+    if (message.startsWith("GOTO")) {
+      this.trackingStatus = "SETTING";
+      setTimeout(() => {
+        this.trackingStatus = "TRACKING";
+      }, 5000);
+    }
+
+    // Simulate stopping tracking
+    if (message === "STOP") {
+      this.trackingStatus = "IDLE";
     }
   };
 }

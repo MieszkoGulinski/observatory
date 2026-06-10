@@ -39,7 +39,6 @@ class MountController extends EventEmitter {
   // See docs/protocol.md for message format
   // Example message: OPEN COND_OK TRACKING 450 -100 -15 -5 -50 65 127
   onMessage = (message: string) => {
-    console.log(message);
     const splitMessage = message.split(" ");
     const roofStatusWord = splitMessage[0];
     const weatherStatusWord = splitMessage[1];

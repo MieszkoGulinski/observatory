@@ -36,13 +36,12 @@ class ScheduleExecutor {
           conditionsSuitableForObservation &&
           isNight
         ) {
-          logger.info("Submitting command to open roof");
           await this.mountControllerClient.sendOpenCommand();
           continue;
         }
         if ((roofState === "OPEN" || roofState === "OPENING") && isDay) {
-          logger.info("Submitting command to close roof");
           await this.mountControllerClient.sendCloseCommand();
+          await this.mountControllerClient.sendStopCommand();
           continue;
         }
 
