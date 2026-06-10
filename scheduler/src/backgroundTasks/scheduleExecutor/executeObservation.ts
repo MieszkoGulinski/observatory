@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import {
   observationsSchedule,
+  exposure,
   type ObservationScheduleItem,
 } from "../../db/schema.ts";
 import logger from "../../logger.ts";
@@ -34,9 +35,24 @@ export default async function executeObservation(
       }
       logger.info("Taking an exposure for observation %d", task.id);
 
+      const startTimestamp = Date.now();
       // Simulate taking exposures
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      // TODO: Then after taking an exposure, write it to the database to exposures table
+
+      db.insert(exposure).values({
+        observationId: task.id,
+        startTimestamp,
+        endTimestamp: Date.now(),
+
+        fileName: "PLACEHOLDER",
+        fileHash: "PLACEHOLDER",
+
+        cameraTemperature:
+          mountControllerClient.lastSensorState?.cameraTemperature,
+        airTemperature: mountControllerClient.lastSensorState?.airTemperature,
+        humidity: mountControllerClient.lastSensorState?.humidity,
+        skyTemperature: mountControllerClient.lastSensorState?.skyTemperature,
+      });
 
       logger.info("Completed an exposure for observation %d", task.id);
     }
