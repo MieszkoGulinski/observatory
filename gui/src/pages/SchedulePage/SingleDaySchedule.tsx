@@ -1,4 +1,5 @@
 import BackgroundCells from "./BackgroundCells";
+import ObservationCell from "./ObservationCell";
 
 function SingleDaySchedule() {
   return (
@@ -13,8 +14,13 @@ function SingleDaySchedule() {
         </div>
 
         {/* Time cells grid */}
-        <div className="grow flex flex-col">
+        <div className="grow flex flex-col relative">
           <BackgroundCells />
+          <ObservationCell label="RR Lyrae" startPerc={35} endPerc={50} />
+          <ObservationCell label="Mu Cephei" startPerc={50} endPerc={52} />
+          <ObservationCell label="P Cygni" startPerc={52} endPerc={54} />
+          <ObservationCell label="Rho Cassiopeae" startPerc={54} endPerc={56} />
+          <ObservationCell label="Zeta Geminorum" startPerc={56} endPerc={66} />
         </div>
       </div>
     </div>
