@@ -1,11 +1,11 @@
 import { eq } from "drizzle-orm";
-import db from "./db/index.ts";
 import {
   observationsSchedule,
   type ObservationScheduleItem,
-} from "./db/schema.ts";
-import logger from "./logger.ts";
-import type MountController from "./mountController.ts";
+} from "../../db/schema.ts";
+import logger from "../../logger.ts";
+import type MountController from "../mountController/index.ts";
+import db from "../../db/index.ts";
 
 export default async function executeObservation(
   task: ObservationScheduleItem,

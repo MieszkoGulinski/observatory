@@ -1,11 +1,11 @@
-import MountController from "./mountController.ts";
-import ScheduleExecutor from "./scheduleExecutor.ts";
+import MountController from "./backgroundTasks/mountController/index.ts";
+import ScheduleExecutor from "./backgroundTasks/scheduleExecutor/index.ts";
 import config from "./config.ts";
 import logger from "./logger.ts";
-import BackupSaver from "./backupSaver.ts";
-import StatisticsSaver from "./statisticsSaver.ts";
+import BackupSaver from "./backgroundTasks/backupSaver.ts";
+import StatisticsSaver from "./backgroundTasks/statisticsSaver.ts";
 import { createApiServer } from "./api/index.ts";
-import SerialPortMountController from "./serialPortMountController.ts";
+import SerialPortMountController from "./backgroundTasks/serialPortMountController.ts";
 
 const serialPortMountController = new SerialPortMountController(
   config.serialPort,

@@ -1,6 +1,6 @@
 import EventEmitter from "node:events";
-import type SerialPortMountController from "./serialPortMountController.ts";
-import logger from "./logger.ts";
+import type SerialPortMountController from "../serialPortMountController.ts";
+import logger from "../../logger.ts";
 
 export type RoofState = "OPEN" | "CLOSED" | "OPENING" | "CLOSING";
 export type TrackingStatus = "TRACKING" | "SETTING" | "IDLE";

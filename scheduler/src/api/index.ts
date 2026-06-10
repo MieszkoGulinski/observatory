@@ -8,8 +8,8 @@ import {
   handleUpdateObservation,
   handleDeleteObservation,
 } from "./apiHandlers.ts";
-import type MountController from "../mountController.ts";
-import type StatisticsSaver from "../statisticsSaver.ts";
+import type MountController from "../backgroundTasks/mountController/index.ts";
+import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
 import cors from "@fastify/cors";
 
 export const createApiServer = async (

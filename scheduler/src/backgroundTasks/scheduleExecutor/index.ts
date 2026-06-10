@@ -1,11 +1,11 @@
-import logger from "./logger.ts";
-import MountController from "./mountController.ts";
-import { delay } from "./utils.ts";
-import db from "./db/index.ts";
-import { observationsSchedule } from "./db/schema.ts";
+import logger from "../../logger.ts";
+import MountController from "../mountController/index.ts";
+import { delay } from "../../utils.ts";
+import db from "../../db/index.ts";
+import { observationsSchedule } from "../../db/schema.ts";
 import { and, gt, lte } from "drizzle-orm";
 import executeObservation from "./executeObservation.ts";
-import { isDayNight } from "./calculateDayNight.ts";
+import { isDayNight } from "../../calculateDayNight.ts";
 
 const POLLING_INTERVAL = 5000; // 5 s
 

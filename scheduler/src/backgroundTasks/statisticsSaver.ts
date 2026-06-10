@@ -1,7 +1,7 @@
 import os from "node:os";
-import db from "./db/index.ts";
-import { statistics, type InsertStatistics } from "./db/schema.ts";
-import MountController from "./mountController.ts";
+import db from "../db/index.ts";
+import { statistics, type InsertStatistics } from "../db/schema.ts";
+import MountController from "./mountController/index.ts";
 
 const STATUS_UPDATE_INTERVAL_MS = 20 * 60 * 1000; // 20 minutes
 

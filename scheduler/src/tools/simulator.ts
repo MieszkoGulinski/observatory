@@ -3,9 +3,14 @@
 // where /dev/pts/9 is the serial port to use in the simulator
 
 import { DelimiterParser, SerialPort } from "serialport";
-import type { RoofState, TrackingStatus } from "../mountController.ts";
+import type {
+  RoofState,
+  TrackingStatus,
+} from "../backgroundTasks/mountController/index.ts";
 
-const INTERVAL_MS = 5000;
+const MESSAGE_INTERVAL_MS = 5000;
+const SIMULATED_ROOF_RESPONSE_DELAY_MS = 5000;
+const SIMULATED_MOUNT_RESPONSE_DELAY_MS = 10000;
 
 const portName = process.argv[2];
 console.log("Starting simulator on port name ", portName);
@@ -25,6 +30,8 @@ class Simulator {
   }
 
   submitMessage = () => {
+    // Edit this method to simulate unsuitable conditions.
+
     const lha = 45;
     const dec = -10;
     const airTemperature = -15;
@@ -33,14 +40,20 @@ class Simulator {
     const humidity = 65;
     const batteryVoltage = 12;
 
+    const conditionsSuitableForObservation = true;
+
+    const conditionsWord = conditionsSuitableForObservation
+      ? "COND_OK"
+      : "COND_BAD";
+
     this.serialPort.write(
-      `${this.roofState} COND_OK TRACKING ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
+      `${this.roofState} ${conditionsWord} ${this.trackingStatus} ${lha * 10} ${dec * 10} ${airTemperature} ${cameraTemperature} ${skyTemperature} ${humidity} ${batteryVoltage * 10}\n`,
     );
   };
 
   run() {
     try {
-      setInterval(this.submitMessage, INTERVAL_MS);
+      setInterval(this.submitMessage, MESSAGE_INTERVAL_MS);
 
       const parser = this.serialPort.pipe(
         new DelimiterParser({ delimiter: "\n" }),
@@ -55,18 +68,24 @@ class Simulator {
   onMessage = (data: Buffer) => {
     const message = data.toString();
 
-    // Simulate closing/opening taking 5 seconds
+    // Edit this method to simulate failure cases
+    // For example, if the roof fails to close when it should,
+    // do not update roofState to CLOSED in the timeout below.
+
+    // Simulate closing/opening
     if (message === "CLOSE") {
       this.roofState = "CLOSING";
+      // closing the roof automatically stops tracking too
+      this.trackingStatus = "IDLE";
       setTimeout(() => {
         this.roofState = "CLOSED";
-      }, 5000);
+      }, SIMULATED_ROOF_RESPONSE_DELAY_MS);
     }
     if (message === "OPEN") {
       this.roofState = "OPENING";
       setTimeout(() => {
         this.roofState = "OPEN";
-      }, 5000);
+      }, SIMULATED_ROOF_RESPONSE_DELAY_MS);
     }
 
     // Simulate pointing to a new LHA/DEC
@@ -74,7 +93,7 @@ class Simulator {
       this.trackingStatus = "SETTING";
       setTimeout(() => {
         this.trackingStatus = "TRACKING";
-      }, 5000);
+      }, SIMULATED_MOUNT_RESPONSE_DELAY_MS);
     }
 
     // Simulate stopping tracking

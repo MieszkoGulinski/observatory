@@ -3,8 +3,8 @@ import { getObservationTimesForUpcomingDays } from "../calculateDayNight.ts";
 import db from "../db/index.ts";
 import { observationsSchedule, statistics } from "../db/schema.ts";
 import { and, gte, lte } from "drizzle-orm";
-import type StatisticsSaver from "../statisticsSaver.ts";
-import type MountController from "../mountController.ts";
+import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
+import type MountController from "../backgroundTasks/mountController/index.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
 

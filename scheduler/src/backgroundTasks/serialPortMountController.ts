@@ -1,6 +1,6 @@
 import { SerialPort } from "serialport";
 import { DelimiterParser } from "@serialport/parser-delimiter";
-import logger from "./logger.ts";
+import logger from "../logger.ts";
 import EventEmitter from "node:events";
 
 const WATCHDOG_TIME_MS = 60000; // 1 minute
