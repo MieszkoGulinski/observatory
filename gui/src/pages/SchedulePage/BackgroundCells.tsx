@@ -1,37 +1,47 @@
-import type { CSSProperties } from "react";
+import config from "@/config";
+import { getSunLevelsForDay } from "@/calculations/getSunLevelsForDay";
 
-const backgroundCellStyling = [
-  { backgroundColor: "#ffffff", borderColor: "#000000" },
-  { backgroundColor: "#dddddd", borderColor: "#ff0000" },
-  { backgroundColor: "#aaaaaa", borderColor: "#ff9900" },
-  { backgroundColor: "#666666", borderColor: "#ffff00" },
-  { backgroundColor: "#000000", borderColor: "#99ff00" },
+const backgroundByLevel = [
+  "#dddddd", // sunrise / sunset
+  "#aaaaaa", // civil twilight
+  "#666666", // nautical twilight
+  "#000000", // astronomical twilight
 ];
 
-// TODO calculate height based on sunrise/sunset/twilight times
-function UpperCell({ style }: { style: CSSProperties }) {
-  return <div className="border-t" style={{ ...style, height: "12.5%" }} />;
-}
-function LowerCell({ style }: { style: CSSProperties }) {
-  return <div className="border-b" style={{ ...style, height: "12.5%" }} />;
-}
+type BackgroundCellsProps = {
+  date: Date;
+};
 
-function BackgroundCells() {
-  return (
-    <>
-      <UpperCell style={backgroundCellStyling[0]} />
-      <UpperCell style={backgroundCellStyling[1]} />
-      <UpperCell style={backgroundCellStyling[2]} />
-      <UpperCell style={backgroundCellStyling[3]} />
-      <UpperCell style={backgroundCellStyling[4]} />
-      {/* Midnight should be somewhere here */}
-      <LowerCell style={backgroundCellStyling[4]} />
-      <LowerCell style={backgroundCellStyling[3]} />
-      <LowerCell style={backgroundCellStyling[2]} />
-      <LowerCell style={backgroundCellStyling[1]} />
-      <LowerCell style={backgroundCellStyling[0]} />
-    </>
+/**
+ * Displays background gradient (civil, nautical, astronomical twilight and night) for a specified day.
+ */
+function BackgroundCells({ date }: BackgroundCellsProps) {
+  const blocksByLevel = getSunLevelsForDay(
+    date,
+    config.latitude,
+    config.longitude,
   );
+
+  const allBlocks = blocksByLevel.flatMap((blocks, level) => {
+    // Draw blocks from lowest level (sunrise/sunset) to highest (astronomical twilight)
+
+    return blocks.map((block, i) => {
+      const [start, end] = block;
+      return (
+        <div
+          key={`${level}-${i}`}
+          className="absolute w-full"
+          style={{
+            top: `${start * 100}%`,
+            bottom: `${(1 - end) * 100}%`,
+            backgroundColor: backgroundByLevel[level],
+          }}
+        />
+      );
+    });
+  });
+
+  return <>{allBlocks}</>;
 }
 
 export default BackgroundCells;

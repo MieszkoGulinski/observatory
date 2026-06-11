@@ -60,13 +60,13 @@ function SchedulePage() {
       {isLoading ? <>loading...</> : null}
       {error ? <>error</> : null}
       <div className="flex gap-2 h-[calc(100vh-120px)] min-h-[720px] overflow-x-auto">
-        <SingleDaySchedule />
-        <SingleDaySchedule />
-        <SingleDaySchedule />
-        <SingleDaySchedule />
-        <SingleDaySchedule />
-        <SingleDaySchedule />
-        <SingleDaySchedule />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
+        <SingleDaySchedule date={new Date(searchStartTime)} />
       </div>
     </>
   );

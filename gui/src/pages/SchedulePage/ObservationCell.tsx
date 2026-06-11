@@ -1,5 +1,3 @@
-import type { CSSProperties } from "react";
-
 type ObservationCellProps = {
   label: string;
   startPerc: number;
