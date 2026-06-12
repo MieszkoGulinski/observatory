@@ -21,7 +21,7 @@ To setup the database:
 npm run db:push
 ```
 
-To load the star catalog from CSV file:
+To load the star catalog from CSV file (it's possible to modify filters inside the script code, or use another CSV file from AAVSO VSX):
 
 ```bash
 npm run load-catalog ../aavso-up-to-mag-10.csv
