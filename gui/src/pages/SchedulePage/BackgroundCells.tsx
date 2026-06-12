@@ -1,5 +1,9 @@
 import config from "@/config";
 import { getSunLevelsForDay } from "@/calculations/getSunLevelsForDay";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 const backgroundByLevel = [
   "#dddddd", // sunrise / sunset
@@ -9,13 +13,15 @@ const backgroundByLevel = [
 ];
 
 type BackgroundCellsProps = {
-  date: Date;
+  startOfDay: number;
 };
 
 /**
  * Displays background gradient (civil, nautical, astronomical twilight and night) for a specified day.
  */
-function BackgroundCells({ date }: BackgroundCellsProps) {
+function BackgroundCells({ startOfDay }: BackgroundCellsProps) {
+  const date = dayjs.utc(startOfDay).toDate();
+
   const blocksByLevel = getSunLevelsForDay(
     date,
     config.latitude,

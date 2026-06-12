@@ -1,4 +1,4 @@
-type ObservationCellProps = {
+export type ObservationCellProps = {
   label: string;
   startPerc: number;
   endPerc: number;

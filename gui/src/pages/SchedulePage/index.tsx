@@ -11,12 +11,22 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import SingleDaySchedule from "./SingleDaySchedule";
+import utc from "dayjs/plugin/utc";
+import { dayLengthMs } from "@/calculations/getSunLevelsForDay";
+
+dayjs.extend(utc);
+
+const DISPLAYED_DAYS = 7;
 
 function SchedulePage() {
   const [searchStartTime, setSearchStartTime] = useState<number>(() =>
-    dayjs().startOf("day").valueOf(),
+    dayjs().utc().startOf("day").valueOf(),
   );
-  const searchEndTime = dayjs(searchStartTime).add(1, "d").valueOf();
+  const searchEndTime = searchStartTime + DISPLAYED_DAYS * dayLengthMs;
+
+  const daysStartsMs = Array.from({ length: DISPLAYED_DAYS }).map((_, i) => {
+    return searchStartTime + i * dayLengthMs;
+  });
 
   const {
     data: schedule,
@@ -60,13 +70,17 @@ function SchedulePage() {
       {isLoading ? <>loading...</> : null}
       {error ? <>error</> : null}
       <div className="flex gap-2 h-[calc(100vh-120px)] min-h-[720px] overflow-x-auto">
-        <SingleDaySchedule date={new Date(searchStartTime)} />
-        <SingleDaySchedule date={new Date(searchStartTime)} />
-        <SingleDaySchedule date={new Date(searchStartTime)} />
-        <SingleDaySchedule date={new Date(searchStartTime)} />
-        <SingleDaySchedule date={new Date(searchStartTime)} />
-        <SingleDaySchedule date={new Date(searchStartTime)} />
-        <SingleDaySchedule date={new Date(searchStartTime)} />
+        {daysStartsMs.map((startOfDay) => (
+          <SingleDaySchedule
+            key={startOfDay}
+            startOfDay={startOfDay}
+            schedule={(schedule || []).filter(
+              (s) =>
+                s.startDate <= startOfDay + dayLengthMs &&
+                s.endDate >= startOfDay,
+            )}
+          />
+        ))}
       </div>
     </>
   );
