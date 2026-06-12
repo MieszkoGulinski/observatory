@@ -36,3 +36,7 @@ The scheduler Node.js process does not serve the web UI. While the UI is served 
 | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | No such built-in module: node:sqlite                                         | Use `nvm` to use a compatible version of Node.js according to `.nvmrc` file, using `nvm use` command. |
 | To use 'node:sqlite' driver, ensure you're running Node.js v22.5.0 or higher | Use `nvm` to use a compatible version of Node.js according to `.nvmrc` file, using `nvm use` command. |
+
+## Sample catalog
+
+A built-in catalog of variable stars is provided in the `aavso-up-to-mag-10.csv` file. It lists all stars brighter than magnitude 10 listed in AAVSO VSX database, and was obtained from AAVSO website using their functionality of exporting data to CSV format.

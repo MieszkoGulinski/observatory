@@ -21,6 +21,12 @@ To setup the database:
 npm run db:push
 ```
 
+To load the star catalog from CSV file:
+
+```bash
+npm run load-catalog ../aavso-up-to-mag-10.csv
+```
+
 To run in development mode, using `tsx`:
 
 ```bash
@@ -45,15 +51,17 @@ Note that to run the scheduler GUI, it needs to be built first, using appropriat
 
 ## Environment variables
 
-| Variable      | Description                                    | Default      |
-| ------------- | ---------------------------------------------- | ------------ |
-| `SERIAL_PORT` | Serial port to use                             | `/dev/ttyS4` |
-| `BAUD_RATE`   | Serial port baud rate                          | 115200       |
-| `LOG_TO_FILE` | Log to file                                    | false        |
-| `FILES_PATH`  | Path to store log files, raw images, SQLite DB | `.`          |
-| `HTTP_PORT`   | Port for the REST API                          | 8080         |
-| `LATITUDE`    | Latitude of the observatory                    | 54           |
-| `LONGITUDE`   | Longitude of the observatory                   | 18           |
+| Variable          | Description                                    | Default      |
+| ----------------- | ---------------------------------------------- | ------------ |
+| `SERIAL_PORT`     | Serial port to use                             | `/dev/ttyS4` |
+| `BAUD_RATE`       | Serial port baud rate                          | 115200       |
+| `LOG_TO_FILE`     | Log to file                                    | false        |
+| `FILES_PATH`      | Path to store log files, raw images, SQLite DB | `.`          |
+| `HTTP_PORT`       | Port for the REST API                          | 8080         |
+| `LATITUDE`        | Latitude of the observatory                    | 54           |
+| `LONGITUDE`       | Longitude of the observatory                   | 18           |
+| `MIN_DECLINATION` | Minimum declination to observe                 | None         |
+| `MAX_DECLINATION` | Maximum declination to observe                 | None         |
 
 ## Testing using a simulator and virtual serial port
 

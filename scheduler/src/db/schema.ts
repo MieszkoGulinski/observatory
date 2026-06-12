@@ -3,17 +3,42 @@ import { createInsertSchema, createUpdateSchema } from "drizzle-orm/zod";
 
 // Define all tables here
 
+export const starCatalog = sqliteTable("star_catalog", {
+  id: integer().primaryKey(),
+  starName: text().notNull(),
+  ra: real().notNull(), // decimal degrees
+  dec: real().notNull(),
+
+  minVMag: real().notNull(), // brightest
+  maxVMag: real().notNull(), // faintest
+  periodDays: real(), // null for unknown period
+  varType: text(), // type of variable star in AAVSO classification, e.g. EA, SRB, M
+});
+
+export type StarCatalogItem = typeof starCatalog.$inferSelect;
+export const insertStarCatalogSchema = createInsertSchema(starCatalog);
+export const updateStarCatalogSchema = createUpdateSchema(starCatalog);
+
 // Observations schedule to be performed.
 export const observationsSchedule = sqliteTable("observations_schedule", {
   id: integer().primaryKey(),
-  note: text(), // manually added by user
-  targetStar: text(), // target star name from astronomy catalog (may be empty for calibration / test frames)
+  label: text().notNull().default(""), // human readable label, usually star name copied from catalog
+  note: text().notNull().default(""), // user's private note
+
+  // Target star, may be empty for calibration / test frames
+  // Note that ra/dec below are centers of the field of view,
+  // not the star's position, as the telescope may be pointed to a field
+  // containing the target star at a non-central position.
+  targetStarId: integer().references(() => starCatalog.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
 
   startDate: integer().notNull(), // UNIX timestamp in ms
   endDate: integer().notNull(), // UNIX timestamp in ms
 
-  ra: real().notNull(), // Right Ascension, decimal degrees
-  dec: real().notNull(), // Declination, decimal degrees
+  ra: real().notNull(), // Right Ascension, decimal degrees (0 ... 360)
+  dec: real().notNull(), // Declination, decimal degrees (-90 ... 90)
   expTimeMs: integer().notNull(), // exposure time in milliseconds
   expIso: integer().notNull(), // exposure ISO
   // Note that shutter aperture and focusing cannot be controlled remotely, and must be set manually.
