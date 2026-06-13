@@ -74,8 +74,8 @@ records.forEach((r) => {
   // 0 ... 1
   const raNormalized = (raHour + raMin / 60 + raSec / 3600) / 24;
 
-  // -1 ... 1
-  const decNormalized =
+  // -90 ... 90
+  const dec =
     (Math.abs(decDeg) + decMin / 60 + decSec / 3600) * Math.sign(decDeg);
 
   const period = parseFloat(r.Period);
@@ -83,7 +83,7 @@ records.forEach((r) => {
   entriesToAdd.push({
     starName: r.Name,
     ra: raNormalized * 360,
-    dec: decNormalized * 90,
+    dec,
     minVMag: minMag,
     maxVMag: maxMag,
     periodDays: !Number.isNaN(period) ? period : null,
