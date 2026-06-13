@@ -88,6 +88,7 @@ records.forEach((r) => {
     maxVMag: maxMag,
     periodDays: !Number.isNaN(period) ? period : null,
     varType: r.Type,
+    normalizedVarType: r.Type.split("/")[0],
   });
 });
 

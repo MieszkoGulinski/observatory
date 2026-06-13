@@ -12,7 +12,8 @@ export const starCatalog = sqliteTable("star_catalog", {
   minVMag: real().notNull(), // brightest
   maxVMag: real().notNull(), // faintest
   periodDays: real(), // null for unknown period
-  varType: text(), // type of variable star in AAVSO classification, e.g. EA, SRB, M
+  varType: text().notNull().default("--"), // type of variable star in AAVSO classification, e.g. EA, SRB, M, including subtype e.g. EA/RS, EA/SD
+  normalizedVarType: text().notNull().default("--"), // as above but without subtypes, e.g. EA instead of EA/RS, EA/SD etc.
 });
 
 export type StarCatalogItem = typeof starCatalog.$inferSelect;

@@ -6,6 +6,8 @@ import {
   handleScheduleObservation,
   handleUpdateObservation,
   handleDeleteObservation,
+  handleGetStarCatalog,
+  handleGetVarTypes,
 } from "./apiHandlers.ts";
 import type MountController from "../backgroundTasks/mountController/index.ts";
 import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
@@ -31,6 +33,8 @@ export const createApiServer = async (
     handleGetStatus(mountControllerClient, statisticsSaver),
   );
   app.get("/statistics", handleGetStatisticsHistory);
+  app.get("/starCatalog", handleGetStarCatalog);
+  app.get("/varTypes", handleGetVarTypes);
 
   return app;
 };

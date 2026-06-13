@@ -5,8 +5,9 @@ import {
   observationsSchedule,
   statistics,
   updateObservationSchema,
+  starCatalog,
 } from "../db/schema.ts";
-import { and, gte, lte, eq } from "drizzle-orm";
+import { and, gte, lte, eq, isNotNull } from "drizzle-orm";
 import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
 import type MountController from "../backgroundTasks/mountController/index.ts";
 
@@ -29,15 +30,25 @@ export function handleGetSchedule(
   if (isNaN(startDate) || isNaN(endDate)) {
     return reply.status(400).send({ error: "Invalid start or end time" });
   }
-  return db
+  const scheduleRows = db
     .select()
     .from(observationsSchedule)
+    .leftJoin(
+      starCatalog,
+      eq(observationsSchedule.targetStarId, starCatalog.id),
+    )
     .where(
       and(
         lte(observationsSchedule.startDate, endDate),
         gte(observationsSchedule.startDate, startDate),
       ),
-    );
+    )
+    .all();
+
+  return scheduleRows.map((row) => ({
+    ...row.observations_schedule,
+    targetStar: row.star_catalog,
+  }));
 }
 
 // Schedule a new observation.
@@ -178,4 +189,38 @@ export async function handleGetStatisticsHistory(
       ),
     )
     .all();
+}
+
+export async function handleGetStarCatalog(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const { normalizedVarType } = request.query as {
+    normalizedVarType?: string;
+  };
+
+  if (normalizedVarType) {
+    return db
+      .select()
+      .from(starCatalog)
+      .where(eq(starCatalog.normalizedVarType, normalizedVarType))
+      .orderBy(starCatalog.ra)
+      .all();
+  }
+
+  return db.select().from(starCatalog).orderBy(starCatalog.ra).all();
+}
+
+export async function handleGetVarTypes(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const result = db
+    .select({ normalizedVarType: starCatalog.normalizedVarType })
+    .from(starCatalog)
+    .where(isNotNull(starCatalog.normalizedVarType))
+    .groupBy(starCatalog.normalizedVarType)
+    .all();
+
+  return result.map((r) => r.normalizedVarType);
 }

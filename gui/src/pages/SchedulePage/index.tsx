@@ -2,7 +2,7 @@ import { fetcher } from "@/utils";
 import dayjs from "dayjs";
 import { useState } from "react";
 import useSWR from "swr";
-import type { Schedule } from "./types";
+import type { ScheduleWithTargetStar } from "./types";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -32,7 +32,7 @@ function SchedulePage() {
     data: schedule,
     error,
     isLoading,
-  } = useSWR<Schedule[]>(
+  } = useSWR<ScheduleWithTargetStar[]>(
     `/schedule?start=${searchStartTime}&end=${searchEndTime}`,
     fetcher,
   );
