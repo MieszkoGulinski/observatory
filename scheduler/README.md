@@ -21,11 +21,17 @@ To setup the database:
 npm run db:push
 ```
 
-To load the star catalog from CSV file (it's possible to modify filters inside the script code, or use another CSV file from AAVSO VSX):
+To load the star catalog from a CSV file:
 
 ```bash
 npm run load-catalog ../aavso-up-to-mag-10.csv
 ```
+
+Note that:
+
+- the import script applies max magnitude and min amplitude filters, and these filters are hardcoded in the script
+- declination filters are read from environment variables `MIN_DECLINATION` and `MAX_DECLINATION`
+- the provided CSV file is exported from AAVSO VSX website, attempting to include all stars brighter than mag 10, but apparently the filter was unreliable, as there were more ones found
 
 To run in development mode, using `tsx`:
 

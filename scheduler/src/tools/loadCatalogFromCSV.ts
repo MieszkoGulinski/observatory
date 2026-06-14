@@ -10,6 +10,13 @@ const LIMIT_MAG = 12;
 // Do not add stars whose amplitude is below...
 const LIMIT_AMP = 0.2;
 
+const MIN_DECLINATION = process.env.MIN_DECLINATION
+  ? parseFloat(process.env.MIN_DECLINATION)
+  : null;
+const MAX_DECLINATION = process.env.MAX_DECLINATION
+  ? parseFloat(process.env.MAX_DECLINATION)
+  : null;
+
 const fileName = process.argv[2];
 
 const fileContent = fs.readFileSync(fileName, "utf-8");
@@ -77,6 +84,9 @@ records.forEach((r) => {
   // -90 ... 90
   const dec =
     (Math.abs(decDeg) + decMin / 60 + decSec / 3600) * Math.sign(decDeg);
+
+  if (MIN_DECLINATION !== null && dec < MIN_DECLINATION) return;
+  if (MAX_DECLINATION !== null && dec > MAX_DECLINATION) return;
 
   const period = parseFloat(r.Period);
 
