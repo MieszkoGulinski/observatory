@@ -3,7 +3,13 @@ import SchedulePage from "./pages/SchedulePage";
 import CurrentStatusPage from "./pages/CurrentStatusPage";
 import StatisticsHistoryPage from "./pages/StatisticsHistoryPage";
 
-import { CalendarDaysIcon, ChartSplineIcon, CpuIcon } from "lucide-react";
+import {
+  CalendarDaysIcon,
+  ChartSplineIcon,
+  CpuIcon,
+  StarIcon,
+} from "lucide-react";
+import StarCatalog from "./pages/StarCatalog";
 
 function App() {
   return (
@@ -22,6 +28,10 @@ function App() {
               <ChartSplineIcon />
               Statistics
             </TabsTrigger>
+            <TabsTrigger value="starCatalog">
+              <StarIcon />
+              Star Catalog
+            </TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="schedule">
@@ -32,6 +42,9 @@ function App() {
         </TabsContent>
         <TabsContent value="statisticsHistory">
           <StatisticsHistoryPage />
+        </TabsContent>
+        <TabsContent value="starCatalog">
+          <StarCatalog />
         </TabsContent>
       </Tabs>
     </div>

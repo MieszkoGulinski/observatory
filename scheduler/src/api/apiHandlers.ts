@@ -7,7 +7,7 @@ import {
   updateObservationSchema,
   starCatalog,
 } from "../db/schema.ts";
-import { and, gte, lte, eq, isNotNull } from "drizzle-orm";
+import { and, gte, lte, eq, isNotNull, count, desc } from "drizzle-orm";
 import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
 import type MountController from "../backgroundTasks/mountController/index.ts";
 
@@ -216,11 +216,18 @@ export async function handleGetVarTypes(
   reply: FastifyReply,
 ) {
   const result = db
-    .select({ normalizedVarType: starCatalog.normalizedVarType })
+    .select({
+      normalizedVarType: starCatalog.normalizedVarType,
+      count: count(),
+    })
     .from(starCatalog)
     .where(isNotNull(starCatalog.normalizedVarType))
     .groupBy(starCatalog.normalizedVarType)
+    .orderBy(desc(count()))
     .all();
 
-  return result.map((r) => r.normalizedVarType);
+  return result.map((r) => ({
+    normalizedVarType: r.normalizedVarType,
+    count: Number(r.count),
+  }));
 }

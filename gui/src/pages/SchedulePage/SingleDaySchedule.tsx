@@ -4,6 +4,9 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import type { Schedule } from "./types";
 import { dayLengthMs } from "@/calculations/getSunLevelsForDay";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import ObservationModal from "./ObservationModal";
 
 dayjs.extend(utc);
 
@@ -23,6 +26,11 @@ type SingleDayScheduleProps = {
  */
 
 function SingleDaySchedule({ startOfDay, schedule }: SingleDayScheduleProps) {
+  const [addingNewObservation, setAddingNewObservation] = useState(false);
+  const [editedObservationId, setEditedObservationId] = useState<number | null>(
+    null,
+  );
+
   const dateStr = dayjs.utc(startOfDay).format("YYYY-MM-DD (ddd)");
   const endOfDay = startOfDay + dayLengthMs;
 
@@ -34,15 +42,24 @@ function SingleDaySchedule({ startOfDay, schedule }: SingleDayScheduleProps) {
     const normalizedEnd = (trimmedEnd - startOfDay) / dayLengthMs;
 
     return {
+      id: s.id,
       label: s.note ?? "",
       startPerc: normalizedStart * 100,
       endPerc: normalizedEnd * 100,
+      onClick: () => setEditedObservationId(s.id),
     };
   });
 
+  const handleNewObservationClick = () => {
+    setAddingNewObservation(true);
+  };
+
   return (
     <div className="flex flex-col grow">
-      <div className="pl-5">{dateStr}</div>
+      <div className="pl-5 flex justify-between items-center">
+        {dateStr}
+        <Button onClick={handleNewObservationClick}>Add</Button>
+      </div>
       <div className="flex grow">
         {/* Hours column */}
         <div className="flex flex-col justify-between w-5 pr-1 text-right">
@@ -54,17 +71,56 @@ function SingleDaySchedule({ startOfDay, schedule }: SingleDayScheduleProps) {
         {/* Time cells grid */}
         <div className="grow flex flex-col relative">
           <BackgroundCells startOfDay={startOfDay} />
-          {formattedSchedule.map((s, i) => (
-            <ObservationCell {...s} key={i} />
+          {formattedSchedule.map((s) => (
+            <ObservationCell {...s} key={s.id} />
           ))}
           {/* TODO remove after implementing full scheduling functionality */}
-          <ObservationCell label="RR Lyrae" startPerc={35} endPerc={50} />
-          <ObservationCell label="Mu Cephei" startPerc={50} endPerc={52} />
-          <ObservationCell label="P Cygni" startPerc={52} endPerc={54} />
-          <ObservationCell label="Rho Cassiopeae" startPerc={54} endPerc={56} />
-          <ObservationCell label="Zeta Geminorum" startPerc={56} endPerc={66} />
+          <ObservationCell
+            label="RR Lyrae"
+            startPerc={35}
+            endPerc={50}
+            id={-1}
+            onClick={() => {}}
+          />
+          <ObservationCell
+            label="Mu Cephei"
+            startPerc={50}
+            endPerc={52}
+            id={-2}
+            onClick={() => {}}
+          />
+          <ObservationCell
+            label="P Cygni"
+            startPerc={52}
+            endPerc={54}
+            id={-3}
+            onClick={() => {}}
+          />
+          <ObservationCell
+            label="Rho Cassiopeae"
+            startPerc={54}
+            endPerc={56}
+            id={-4}
+            onClick={() => {}}
+          />
+          <ObservationCell
+            label="Zeta Geminorum"
+            startPerc={56}
+            endPerc={66}
+            id={-5}
+            onClick={() => {}}
+          />
         </div>
       </div>
+      {addingNewObservation ? (
+        <ObservationModal onClose={() => setAddingNewObservation(false)} />
+      ) : null}
+      {editedObservationId ? (
+        <ObservationModal
+          scheduleItem={schedule.find((s) => s.id === editedObservationId)}
+          onClose={() => setEditedObservationId(null)}
+        />
+      ) : null}
     </div>
   );
 }
