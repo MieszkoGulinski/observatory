@@ -14,14 +14,14 @@ type VarTypeCount = {
   count: number;
 };
 
+// TODO add clickable rows to apply filter on star catalog
+
 function TypeStatistics() {
   const {
     data: varTypes,
     isLoading,
     error,
   } = useSWR<VarTypeCount[]>("/varTypes", fetcher);
-
-  console.log(varTypes);
 
   return (
     <Dialog>
@@ -35,22 +35,26 @@ function TypeStatistics() {
         {isLoading ? <>loading...</> : null}
         {error ? <>error</> : null}
         {varTypes ? (
-          <table className="table-fixed w-full max-h-100 overflow-y-scroll block">
-            <thead className="sticky top-0 bg-white">
-              <tr>
-                <th>Type</th>
-                <th>Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              {varTypes.map((varType) => (
-                <tr key={varType.normalizedVarType}>
-                  <td>{varType.normalizedVarType}</td>
-                  <td>{varType.count}</td>
+          <div className="max-h-100 overflow-y-scroll">
+            <table className="table-fixed w-full">
+              <thead className="sticky top-0 bg-white text-left">
+                <tr>
+                  <th>Type</th>
+                  <th className="w-[80px]">Count</th>
+                  <th>Description</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {varTypes.map((varType) => (
+                  <tr key={varType.normalizedVarType}>
+                    <td>{varType.normalizedVarType}</td>
+                    <td>{varType.count}</td>
+                    <td>{/* TODO add description of varType */}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : null}
       </DialogContent>
     </Dialog>

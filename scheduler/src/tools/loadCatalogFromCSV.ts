@@ -8,7 +8,7 @@ import { starCatalog, type StarCatalogItem } from "../db/schema.ts";
 // Do not add stars whose max magnitude (at faintest) is below...
 const LIMIT_MAG = 12;
 // Do not add stars whose amplitude is below...
-const LIMIT_AMP = 0.2;
+const LIMIT_AMP = 0.1;
 
 const MIN_DECLINATION = process.env.MIN_DECLINATION
   ? parseFloat(process.env.MIN_DECLINATION)
@@ -90,6 +90,20 @@ records.forEach((r) => {
 
   const period = parseFloat(r.Period);
 
+  // Remove additional information from varType
+  // Example: EA/GS > EA
+  // Example: LC: > LC
+  // Example: EA+DSCT > EA
+  // Also, merge unknown star types into single "MISC"
+  let normalizedVarType = r.Type;
+  if (normalizedVarType === "--" || normalizedVarType === "*")
+    normalizedVarType = "MISC";
+  normalizedVarType = normalizedVarType.split("/")[0];
+  normalizedVarType = normalizedVarType.split(":")[0];
+  normalizedVarType = normalizedVarType.split("|")[0];
+  normalizedVarType = normalizedVarType.split("+")[0];
+  normalizedVarType = normalizedVarType.split("-")[0];
+
   entriesToAdd.push({
     starName: r.Name,
     ra: raNormalized * 360,
@@ -98,7 +112,7 @@ records.forEach((r) => {
     maxVMag: maxMag,
     periodDays: !Number.isNaN(period) ? period : null,
     varType: r.Type,
-    normalizedVarType: r.Type.split("/")[0],
+    normalizedVarType,
   });
 });
 
