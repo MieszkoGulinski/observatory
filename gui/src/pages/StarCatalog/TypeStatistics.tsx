@@ -7,21 +7,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { fetcher } from "@/utils";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+import normalizedVarTypeDescriptions from "./normalizedVarTypeDescriptions";
 
 type VarTypeCount = {
   normalizedVarType: string;
   count: number;
 };
 
-// TODO add clickable rows to apply filter on star catalog
+type TypeStatisticsProps = {
+  onTypeClick?: (normalizedVarType: string) => void;
+};
 
-function TypeStatistics() {
+function TypeStatistics({ onTypeClick }: TypeStatisticsProps) {
   const {
     data: varTypes,
     isLoading,
     error,
-  } = useSWR<VarTypeCount[]>("/varTypes", fetcher);
+  } = useSWRImmutable<VarTypeCount[]>("/varTypes", fetcher);
 
   return (
     <Dialog>
@@ -39,17 +42,25 @@ function TypeStatistics() {
             <table className="table-fixed w-full">
               <thead className="sticky top-0 bg-white text-left">
                 <tr>
-                  <th>Type</th>
+                  <th className="w-[80px]">Type</th>
                   <th className="w-[80px]">Count</th>
                   <th>Description</th>
                 </tr>
               </thead>
               <tbody>
                 {varTypes.map((varType) => (
-                  <tr key={varType.normalizedVarType}>
+                  <tr
+                    key={varType.normalizedVarType}
+                    onClick={() => onTypeClick?.(varType.normalizedVarType)}
+                    className="cursor-pointer hover:bg-gray-200"
+                  >
                     <td>{varType.normalizedVarType}</td>
                     <td>{varType.count}</td>
-                    <td>{/* TODO add description of varType */}</td>
+                    <td>
+                      {normalizedVarTypeDescriptions[
+                        varType.normalizedVarType
+                      ] || ""}
+                    </td>
                   </tr>
                 ))}
               </tbody>

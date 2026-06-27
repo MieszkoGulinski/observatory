@@ -1,5 +1,5 @@
 import { fetcher } from "@/utils";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import TypeStatistics from "./TypeStatistics";
 
 type StarCatalogEntry = {
@@ -15,11 +15,12 @@ type StarCatalogEntry = {
 };
 
 function StarCatalog() {
+  // useSWRImmutable doesn't automatically refetch data
   const {
     data: stars,
     isLoading,
     error,
-  } = useSWR<StarCatalogEntry[]>("/starCatalog", fetcher);
+  } = useSWRImmutable<StarCatalogEntry[]>("/starCatalog", fetcher);
 
   return (
     <div>

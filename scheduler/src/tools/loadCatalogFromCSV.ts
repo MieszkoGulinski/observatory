@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { parse } from "csv-parse/sync";
 import db from "../db/index.ts";
 import { starCatalog, type StarCatalogItem } from "../db/schema.ts";
+import getNormalizedVarType from "./getNormalizedVarType.ts";
 
 // Configure filters here:
 // Do not add stars whose max magnitude (at faintest) is below...
@@ -90,20 +91,6 @@ records.forEach((r) => {
 
   const period = parseFloat(r.Period);
 
-  // Remove additional information from varType
-  // Example: EA/GS > EA
-  // Example: LC: > LC
-  // Example: EA+DSCT > EA
-  // Also, merge unknown star types into single "MISC"
-  let normalizedVarType = r.Type;
-  if (normalizedVarType === "--" || normalizedVarType === "*")
-    normalizedVarType = "MISC";
-  normalizedVarType = normalizedVarType.split("/")[0];
-  normalizedVarType = normalizedVarType.split(":")[0];
-  normalizedVarType = normalizedVarType.split("|")[0];
-  normalizedVarType = normalizedVarType.split("+")[0];
-  normalizedVarType = normalizedVarType.split("-")[0];
-
   entriesToAdd.push({
     starName: r.Name,
     ra: raNormalized * 360,
@@ -112,7 +99,7 @@ records.forEach((r) => {
     maxVMag: maxMag,
     periodDays: !Number.isNaN(period) ? period : null,
     varType: r.Type,
-    normalizedVarType,
+    normalizedVarType: getNormalizedVarType(r.Type),
   });
 });
 
