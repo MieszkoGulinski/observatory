@@ -1,4 +1,4 @@
-import config from "@/config";
+import { useConfig } from "@/config";
 import { getSunLevelsForDay } from "@/calculations/getSunLevelsForDay";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -20,6 +20,7 @@ type BackgroundCellsProps = {
  * Displays background gradient (civil, nautical, astronomical twilight and night) for a specified day.
  */
 function BackgroundCells({ startOfDay }: BackgroundCellsProps) {
+  const config = useConfig();
   const date = dayjs.utc(startOfDay).toDate();
 
   const blocksByLevel = getSunLevelsForDay(

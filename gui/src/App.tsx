@@ -13,27 +13,25 @@ import StarCatalog from "./pages/StarCatalog";
 
 function App() {
   return (
-    <div className="p-2">
+    <div className="max-w-screen-2xl mx-auto">
       <Tabs defaultValue="schedule">
-        <div className="flex gap-2">
-          <TabsList>
-            <TabsTrigger value="schedule">
-              <CalendarDaysIcon /> Schedule
-            </TabsTrigger>
-            <TabsTrigger value="currentStatus">
-              <CpuIcon />
-              Current Status
-            </TabsTrigger>
-            <TabsTrigger value="statisticsHistory">
-              <ChartSplineIcon />
-              Statistics
-            </TabsTrigger>
-            <TabsTrigger value="starCatalog">
-              <StarIcon />
-              Star Catalog
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList className="w-full my-2">
+          <TabsTrigger value="schedule">
+            <CalendarDaysIcon /> Schedule
+          </TabsTrigger>
+          <TabsTrigger value="currentStatus">
+            <CpuIcon />
+            Current Status
+          </TabsTrigger>
+          <TabsTrigger value="statisticsHistory">
+            <ChartSplineIcon />
+            Statistics
+          </TabsTrigger>
+          <TabsTrigger value="starCatalog">
+            <StarIcon />
+            Star Catalog
+          </TabsTrigger>
+        </TabsList>
         <TabsContent value="schedule">
           <SchedulePage />
         </TabsContent>

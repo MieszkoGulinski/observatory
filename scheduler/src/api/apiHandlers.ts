@@ -10,6 +10,7 @@ import {
 import { and, gte, lte, eq, isNotNull, count, desc } from "drizzle-orm";
 import type StatisticsSaver from "../backgroundTasks/statisticsSaver.ts";
 import type MountController from "../backgroundTasks/mountController/index.ts";
+import config from "../config.ts";
 
 // This file contains handler functions for the REST API with parsing of arguments.
 
@@ -230,4 +231,8 @@ export async function handleGetVarTypes(
     normalizedVarType: r.normalizedVarType,
     count: Number(r.count),
   }));
+}
+
+export async function handleGetConfig() {
+  return config;
 }

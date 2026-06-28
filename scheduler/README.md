@@ -73,9 +73,11 @@ Note that to run the scheduler GUI, it needs to be built first, using appropriat
 
 `IMPORT_LIMIT_MAG`, `IMPORT_LIMIT_AMPLITUDE`, `IMPORT_MIN_DECLINATION` and `IMPORT_MAX_DECLINATION` are applied during running the import script.
 
-If you're in the northern hemisphere, you'll probably need to set `IMPORT_MIN_DECLINATION` to a negative value, to prevent importing stars from the southern hemisphere that probably won't be visible from your location.
+If you're in the northern hemisphere, you'll probably need to set `IMPORT_MIN_DECLINATION` to a negative value, to prevent importing stars from the southern hemisphere that won't be visible from your location.
 
-If you're in the southern hemisphere, you'll probably need to set `IMPORT_MAX_DECLINATION` to a positive value, to prevent importing stars from the northern hemisphere that probably won't be visible from your location.
+If you're in the southern hemisphere, you'll probably need to set `IMPORT_MAX_DECLINATION` to a positive value, to prevent importing stars from the northern hemisphere that won't be visible from your location.
+
+`IMPORT_LIMIT_MAG` and `IMPORT_LIMIT_AMPLITUDE` allow additional filtering, and should be adjusted depending on your hardware and sky limitations.
 
 ## Testing using a simulator and virtual serial port
 
