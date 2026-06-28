@@ -7,13 +7,16 @@ function getNormalizedVarType(varType: string): string {
   // Also, merge unknown star types into single "?"
 
   let normalizedVarType = varType;
+
+  // Merge "unknown" variability types into single
   if (
     normalizedVarType === "--" ||
     normalizedVarType === "*" ||
-    normalizedVarType === "VAR" ||
-    normalizedVarType === "MISC"
+    normalizedVarType.startsWith("VAR") ||
+    normalizedVarType.startsWith("MISC")
   )
     normalizedVarType = "?";
+
   normalizedVarType = normalizedVarType.split("/")[0];
   normalizedVarType = normalizedVarType.split(":")[0];
   normalizedVarType = normalizedVarType.split("|")[0];

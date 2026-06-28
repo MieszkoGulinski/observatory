@@ -7,15 +7,21 @@ import getNormalizedVarType from "./getNormalizedVarType.ts";
 
 // Configure filters here:
 // Do not add stars whose max magnitude (at faintest) is below...
-const LIMIT_MAG = 12;
+const magnitudeLimit = process.env.IMPORT_LIMIT_MAG
+  ? parseFloat(process.env.IMPORT_LIMIT_MAG)
+  : null; // 12
 // Do not add stars whose amplitude is below...
-const LIMIT_AMP = 0.1;
+const amplitudeLimit = process.env.IMPORT_LIMIT_AMPLITUDE
+  ? parseFloat(process.env.IMPORT_LIMIT_AMPLITUDE)
+  : null; // 0.1
 
-const MIN_DECLINATION = process.env.MIN_DECLINATION
-  ? parseFloat(process.env.MIN_DECLINATION)
+// Declination range of stars to import.
+// If you're in the northern hemisphere, you'll probably need to set MIN_DECLINATION
+const MIN_DECLINATION = process.env.IMPORT_MIN_DECLINATION
+  ? parseFloat(process.env.IMPORT_MIN_DECLINATION)
   : null;
-const MAX_DECLINATION = process.env.MAX_DECLINATION
-  ? parseFloat(process.env.MAX_DECLINATION)
+const MAX_DECLINATION = process.env.IMPORT_MAX_DECLINATION
+  ? parseFloat(process.env.IMPORT_MAX_DECLINATION)
   : null;
 
 const fileName = process.argv[2];
@@ -71,8 +77,8 @@ records.forEach((r) => {
   }
 
   if (minMag === null || maxMag === null) return;
-  if (maxMag > LIMIT_MAG) return;
-  if (maxMag - minMag < LIMIT_AMP) return;
+  if (magnitudeLimit !== null && maxMag > magnitudeLimit) return;
+  if (amplitudeLimit !== null && maxMag - minMag < amplitudeLimit) return;
 
   // Decode coords
   const [raHour, raMin, raSec, decDeg, decMin, decSec] = r.Coords.split(

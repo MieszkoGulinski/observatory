@@ -57,17 +57,25 @@ Note that to run the scheduler GUI, it needs to be built first, using appropriat
 
 ## Environment variables
 
-| Variable          | Description                                    | Default      |
-| ----------------- | ---------------------------------------------- | ------------ |
-| `SERIAL_PORT`     | Serial port to use                             | `/dev/ttyS4` |
-| `BAUD_RATE`       | Serial port baud rate                          | 115200       |
-| `LOG_TO_FILE`     | Log to file                                    | false        |
-| `FILES_PATH`      | Path to store log files, raw images, SQLite DB | `.`          |
-| `HTTP_PORT`       | Port for the REST API                          | 8080         |
-| `LATITUDE`        | Latitude of the observatory                    | 54           |
-| `LONGITUDE`       | Longitude of the observatory                   | 18           |
-| `MIN_DECLINATION` | Minimum declination to observe                 | None         |
-| `MAX_DECLINATION` | Maximum declination to observe                 | None         |
+| Variable                 | Description                                    | Default      |
+| ------------------------ | ---------------------------------------------- | ------------ |
+| `SERIAL_PORT`            | Serial port to use                             | `/dev/ttyS4` |
+| `BAUD_RATE`              | Serial port baud rate                          | 115200       |
+| `LOG_TO_FILE`            | Log to file                                    | false        |
+| `FILES_PATH`             | Path to store log files, raw images, SQLite DB | `.`          |
+| `HTTP_PORT`              | Port for the REST API                          | 8080         |
+| `LATITUDE`               | Latitude of the observatory                    | 54           |
+| `LONGITUDE`              | Longitude of the observatory                   | 18           |
+| `IMPORT_LIMIT_MAG`       | Maximum magnitude to import                    | 12           |
+| `IMPORT_LIMIT_AMPLITUDE` | Minimum amplitude to import                    | 0.1          |
+| `IMPORT_MIN_DECLINATION` | Minimum declination to import                  | -30          |
+| `IMPORT_MAX_DECLINATION` | Maximum declination to import                  | None         |
+
+`IMPORT_LIMIT_MAG`, `IMPORT_LIMIT_AMPLITUDE`, `IMPORT_MIN_DECLINATION` and `IMPORT_MAX_DECLINATION` are applied during running the import script.
+
+If you're in the northern hemisphere, you'll probably need to set `IMPORT_MIN_DECLINATION` to a negative value, to prevent importing stars from the southern hemisphere that probably won't be visible from your location.
+
+If you're in the southern hemisphere, you'll probably need to set `IMPORT_MAX_DECLINATION` to a positive value, to prevent importing stars from the northern hemisphere that probably won't be visible from your location.
 
 ## Testing using a simulator and virtual serial port
 
