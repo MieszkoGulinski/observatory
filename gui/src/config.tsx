@@ -1,6 +1,8 @@
 import useSWRImmutable from "swr/immutable";
 import { fetcher } from "./utils";
 import { createContext, useContext } from "react";
+import SpinnerLine from "./components/SpinnerLine";
+import ApiErrorMessage from "./components/ApiErrorMessage";
 
 export type Config = {
   serialPort: string;
@@ -36,10 +38,11 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
     fetcher,
   );
   if (isLoading) {
-    return <>loading...</>;
+    return <SpinnerLine />;
   }
+
   if (error) {
-    return <>error</>;
+    return <ApiErrorMessage error={error} />;
   }
 
   return (

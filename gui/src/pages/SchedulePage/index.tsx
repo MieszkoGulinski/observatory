@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import SingleDaySchedule from "./SingleDaySchedule";
 import utc from "dayjs/plugin/utc";
 import { dayLengthMs } from "@/calculations/getSunLevelsForDay";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
+import SpinnerLine from "@/components/SpinnerLine";
 
 dayjs.extend(utc);
 
@@ -67,8 +69,8 @@ function SchedulePage() {
         <Button onClick={onClickNext}>Next</Button>
         {schedule ? <div>{schedule.length} in displayed range</div> : null}
       </div>
-      {isLoading ? <>loading...</> : null}
-      {error ? <>error</> : null}
+      {isLoading ? <SpinnerLine /> : null}
+      {error ? <ApiErrorMessage error={error} /> : null}
       <div className="flex gap-2 h-[calc(100vh-120px)] min-h-[720px] overflow-x-auto">
         {daysStartsMs.map((startOfDay) => (
           <SingleDaySchedule

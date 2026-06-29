@@ -1,3 +1,5 @@
+import ApiErrorMessage from "@/components/ApiErrorMessage";
+import SpinnerLine from "@/components/SpinnerLine";
 import { Button } from "@/components/ui/button";
 import { fetcher } from "@/utils";
 import useSWR from "swr";
@@ -32,8 +34,8 @@ function StatusPage() {
     fetcher,
   );
 
-  if (isLoading || !data) return <>Loading...</>;
-  if (error) return <>Error loading data</>;
+  if (isLoading || !data) return <SpinnerLine />;
+  if (error) return <ApiErrorMessage error={error} />;
 
   return (
     <div>

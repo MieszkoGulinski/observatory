@@ -3,6 +3,8 @@ import useSWRImmutable from "swr/immutable";
 import TypeStatistics from "./TypeStatistics";
 import type { StarCatalogEntry } from "./types";
 import StarsTable from "./StarsTable";
+import SpinnerLine from "@/components/SpinnerLine";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
 
 function StarCatalog() {
   // useSWRImmutable doesn't automatically refetch data
@@ -14,8 +16,8 @@ function StarCatalog() {
 
   return (
     <div>
-      {isLoading ? <>loading...</> : null}
-      {error ? <>error</> : null}
+      {isLoading ? <SpinnerLine /> : null}
+      {error ? <ApiErrorMessage error={error} /> : null}
       <TypeStatistics />
       {stars ? <StarsTable stars={stars} /> : null}
     </div>

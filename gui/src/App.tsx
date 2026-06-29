@@ -2,7 +2,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SchedulePage from "./pages/SchedulePage";
 import CurrentStatusPage from "./pages/CurrentStatusPage";
 import StatisticsHistoryPage from "./pages/StatisticsHistoryPage";
-
 import {
   CalendarDaysIcon,
   ChartSplineIcon,

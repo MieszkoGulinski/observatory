@@ -5,6 +5,8 @@ import { useState } from "react";
 import useSWR from "swr";
 import { type StatisticsRowFromServer } from "./types";
 import StatisticsChart from "./StatisticsChart";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
+import SpinnerLine from "@/components/SpinnerLine";
 
 function StatisticsHistoryPage() {
   const [searchStartTime, setSearchStartTime] = useState<number>(() =>
@@ -39,8 +41,8 @@ function StatisticsHistoryPage() {
         }}
         className="rounded-lg border"
       />
-      {isLoading ? <>loading...</> : null}
-      {error ? <>error</> : null}
+      {isLoading ? <SpinnerLine /> : null}
+      {error ? <ApiErrorMessage error={error} /> : null}
       {data ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           <StatisticsChart
