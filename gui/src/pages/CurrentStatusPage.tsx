@@ -34,8 +34,8 @@ function StatusPage() {
     fetcher,
   );
 
-  if (isLoading || !data) return <SpinnerLine />;
   if (error) return <ApiErrorMessage error={error} />;
+  if (isLoading || !data) return <SpinnerLine />;
 
   return (
     <div>
