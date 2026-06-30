@@ -1,6 +1,6 @@
 import { fetcher } from "@/utils";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import useSWR from "swr";
 import type { ScheduleWithTargetStar } from "../types";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,7 +14,6 @@ import SingleDaySchedule from "./SingleDaySchedule";
 import utc from "dayjs/plugin/utc";
 import { dayLengthMs } from "@/calculations/getSunLevelsForDay";
 import ApiErrorMessage from "@/components/ApiErrorMessage";
-import SpinnerLine from "@/components/SpinnerLine";
 
 dayjs.extend(utc);
 
@@ -22,59 +21,57 @@ const DISPLAYED_DAYS = 7;
 
 type WeekSchedulePageProps = {
   onSelectDay: (day: number) => void;
+  weekStartTime: number;
+  setWeekStartTime: Dispatch<SetStateAction<number>>;
 };
 
-function WeekSchedulePage({ onSelectDay }: WeekSchedulePageProps) {
-  const [searchStartTime, setSearchStartTime] = useState<number>(() =>
-    dayjs().utc().startOf("day").valueOf(),
-  );
-  const searchEndTime = searchStartTime + DISPLAYED_DAYS * dayLengthMs;
+function WeekSchedulePage({
+  onSelectDay,
+  weekStartTime,
+  setWeekStartTime,
+}: WeekSchedulePageProps) {
+  const weekEndTime = weekStartTime + DISPLAYED_DAYS * dayLengthMs;
 
   const daysStartsMs = Array.from({ length: DISPLAYED_DAYS }).map((_, i) => {
-    return searchStartTime + i * dayLengthMs;
+    return weekStartTime + i * dayLengthMs;
   });
 
-  const {
-    data: schedule,
-    error,
-    isLoading,
-  } = useSWR<ScheduleWithTargetStar[]>(
-    `/schedule?start=${searchStartTime}&end=${searchEndTime}`,
+  const { data: schedule, error } = useSWR<ScheduleWithTargetStar[]>(
+    `/schedule?start=${weekStartTime}&end=${weekEndTime}`,
     fetcher,
   );
 
   const onClickPrev = () => {
-    setSearchStartTime((prev) => dayjs(prev).subtract(1, "d").valueOf());
+    setWeekStartTime((prev) => dayjs(prev).subtract(1, "d").valueOf());
   };
   const onClickNext = () => {
-    setSearchStartTime((prev) => dayjs(prev).add(1, "d").valueOf());
+    setWeekStartTime((prev) => dayjs(prev).add(1, "d").valueOf());
   };
+
+  if (error) return <ApiErrorMessage error={error} />;
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex gap-2 mb-4">
         <Button onClick={onClickPrev}>Prev</Button>
         <Popover>
           <PopoverTrigger asChild>
-            <Button>{dayjs(searchStartTime).format("YYYY-MM-DD")}</Button>
+            <Button>{dayjs(weekStartTime).format("YYYY-MM-DD")}</Button>
           </PopoverTrigger>
           <PopoverContent>
             <Calendar
               mode="single"
-              selected={new Date(searchStartTime)}
+              selected={new Date(weekStartTime)}
               onSelect={(d) => {
                 if (!d) return;
-                setSearchStartTime(d.valueOf());
+                setWeekStartTime(d.valueOf());
               }}
               className="rounded-lg border"
             />
           </PopoverContent>
         </Popover>
         <Button onClick={onClickNext}>Next</Button>
-        {schedule ? <div>{schedule.length} in displayed range</div> : null}
       </div>
-      {isLoading ? <SpinnerLine /> : null}
-      {error ? <ApiErrorMessage error={error} /> : null}
       <div className="flex gap-2 h-[calc(100vh-120px)] min-h-[720px] overflow-x-auto">
         {daysStartsMs.map((startOfDay) => (
           <SingleDaySchedule

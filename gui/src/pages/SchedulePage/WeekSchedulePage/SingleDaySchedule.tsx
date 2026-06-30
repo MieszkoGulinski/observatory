@@ -1,5 +1,5 @@
 import BackgroundCells from "./BackgroundCells";
-import ObservationCell from "./ObservationCell";
+import ObservationTimeCell from "./ObservationTimeCell";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import type { Schedule } from "../types";
@@ -68,7 +68,7 @@ function SingleDaySchedule({
         <div className="grow flex flex-col relative">
           <BackgroundCells startOfDay={startOfDay} />
           {normalizedStart && normalizedEnd ? (
-            <ObservationCell
+            <ObservationTimeCell
               normalizedStart={normalizedStart}
               normalizedEnd={normalizedEnd}
             />

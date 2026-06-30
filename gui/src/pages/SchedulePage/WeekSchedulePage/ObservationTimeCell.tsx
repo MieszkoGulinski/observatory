@@ -5,7 +5,7 @@ export type ObservationCellProps = {
 
 // Bar showing time where there is an observation
 
-function ObservationCell({
+function ObservationTimeCell({
   normalizedStart,
   normalizedEnd,
 }: ObservationCellProps) {
@@ -25,4 +25,4 @@ function ObservationCell({
   );
 }
 
-export default ObservationCell;
+export default ObservationTimeCell;

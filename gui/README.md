@@ -22,3 +22,7 @@ To build and serve the GUI for production:
 npm run build
 npm run start
 ```
+
+## Additional information
+
+Favicon taken from https://lucide.dev/icons/fan
