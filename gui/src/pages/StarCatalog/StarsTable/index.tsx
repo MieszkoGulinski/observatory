@@ -1,7 +1,8 @@
-import type { StarCatalogEntry, StarCatalogFilters } from "./types";
+import type { StarCatalogEntry, StarCatalogFilters } from "../types";
 import TypeStatistics from "./TypeStatistics";
 import { useState } from "react";
 import { sortBy } from "ramda";
+import TableHeader from "./TableHeader";
 
 type StarsTableProps = {
   stars: StarCatalogEntry[];
@@ -22,7 +23,10 @@ function StarsTable({ stars }: StarsTableProps) {
     return filters.normalizedVarTypes.includes(star.normalizedVarType);
   });
 
-  const sortedStars = sortBy((star) => star[orderBy], starsToDisplay);
+  const sortedStars = sortBy(
+    (star) => star[orderBy] as number | string, // TypeScript wouldn't accept null
+    starsToDisplay,
+  );
   if (orderDesc) sortedStars.reverse();
 
   function onChangeOrder(column: keyof StarCatalogEntry) {
@@ -53,18 +57,11 @@ function StarsTable({ stars }: StarsTableProps) {
         selectedTypes={filters.normalizedVarTypes}
       />
       <table className="table-fixed w-full">
-        <thead className="text-left">
-          <tr>
-            <th onClick={() => onChangeOrder("starName")}>Name</th>
-            <th onClick={() => onChangeOrder("ra")}>RA</th>
-            <th onClick={() => onChangeOrder("dec")}>Dec</th>
-            <th onClick={() => onChangeOrder("minVMag")}>Min VMag</th>
-            <th onClick={() => onChangeOrder("maxVMag")}>Max VMag</th>
-            <th onClick={() => onChangeOrder("periodDays")}>Period (days)</th>
-            <th>Type</th>
-            <th>Normalized Type</th>
-          </tr>
-        </thead>
+        <TableHeader
+          onChangeOrder={onChangeOrder}
+          orderBy={orderBy}
+          orderDesc={orderDesc}
+        />
         <tbody>
           {sortedStars.map((star) => (
             <tr key={star.id} className="hover:bg-gray-100">

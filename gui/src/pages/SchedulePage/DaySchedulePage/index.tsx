@@ -53,10 +53,7 @@ function DaySchedulePage({
         <DayScheduleTable schedule={schedule} />
       )}
       {isAddModalOpen && (
-        <ObservationModal
-          onClose={() => setIsAddModalOpen(false)}
-          scheduleItem={null}
-        />
+        <ObservationModal onClose={() => setIsAddModalOpen(false)} />
       )}
     </div>
   );
