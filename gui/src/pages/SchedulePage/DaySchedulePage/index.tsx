@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import DayScheduleTable from "./DayScheduleTable";
+import ObservationModal from "./ObservationModal";
+import { useState } from "react";
 
 dayjs.extend(utc);
 
@@ -31,17 +33,30 @@ function DaySchedulePage({
     fetcher,
   );
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const onClickAddObservation = () => {
+    setIsAddModalOpen(true);
+  };
+
   return (
     <div>
       <div className="flex gap-2 mb-4 items-center">
         <Button onClick={backToWeekSchedule}>Back</Button>
         {dayjs(startOfDay).format("YYYY-MM-DD (ddd)")}
+        <Button onClick={onClickAddObservation}>Add observation</Button>
       </div>
       {error ? <ApiErrorMessage error={error} /> : null}
       {isLoading || !schedule ? (
         <SpinnerLine />
       ) : (
         <DayScheduleTable schedule={schedule} />
+      )}
+      {isAddModalOpen && (
+        <ObservationModal
+          onClose={() => setIsAddModalOpen(false)}
+          scheduleItem={null}
+        />
       )}
     </div>
   );

@@ -9,3 +9,7 @@ export type StarCatalogEntry = {
   varType: string;
   normalizedVarType: string;
 };
+
+export type StarCatalogFilters = {
+  normalizedVarTypes: string[];
+};

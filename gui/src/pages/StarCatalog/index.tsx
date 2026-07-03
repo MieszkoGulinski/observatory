@@ -1,6 +1,5 @@
 import { fetcher } from "@/utils";
 import useSWRImmutable from "swr/immutable";
-import TypeStatistics from "./TypeStatistics";
 import type { StarCatalogEntry } from "./types";
 import StarsTable from "./StarsTable";
 import SpinnerLine from "@/components/SpinnerLine";
@@ -18,7 +17,6 @@ function StarCatalog() {
     <div>
       {isLoading ? <SpinnerLine /> : null}
       {error ? <ApiErrorMessage error={error} /> : null}
-      <TypeStatistics />
       {stars ? <StarsTable stars={stars} /> : null}
     </div>
   );

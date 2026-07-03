@@ -4,7 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Schedule } from "../types";
+import type { Schedule } from "../../types";
 
 type ObservationModalProps = {
   scheduleItem?: Schedule;
