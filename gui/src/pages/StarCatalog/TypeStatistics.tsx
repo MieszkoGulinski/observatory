@@ -9,6 +9,7 @@ import {
 import { fetcher } from "@/utils";
 import useSWRImmutable from "swr/immutable";
 import normalizedVarTypeDescriptions from "./normalizedVarTypeDescriptions";
+import { cn } from "@/lib/utils";
 
 type VarTypeCount = {
   normalizedVarType: string;
@@ -17,9 +18,10 @@ type VarTypeCount = {
 
 type TypeStatisticsProps = {
   onTypeClick?: (normalizedVarType: string) => void;
+  selectedTypes: string[];
 };
 
-function TypeStatistics({ onTypeClick }: TypeStatisticsProps) {
+function TypeStatistics({ onTypeClick, selectedTypes }: TypeStatisticsProps) {
   const {
     data: varTypes,
     isLoading,
@@ -52,7 +54,12 @@ function TypeStatistics({ onTypeClick }: TypeStatisticsProps) {
                   <tr
                     key={varType.normalizedVarType}
                     onClick={() => onTypeClick?.(varType.normalizedVarType)}
-                    className="cursor-pointer hover:bg-gray-200"
+                    className={cn(
+                      "cursor-pointer hover:bg-gray-100",
+                      selectedTypes.includes(varType.normalizedVarType)
+                        ? "bg-gray-200 hover:bg-gray-300"
+                        : "",
+                    )}
                   >
                     <td>{varType.normalizedVarType}</td>
                     <td>{varType.count}</td>

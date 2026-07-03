@@ -22,10 +22,7 @@ function StarsTable({ stars }: StarsTableProps) {
     return filters.normalizedVarTypes.includes(star.normalizedVarType);
   });
 
-  const sortedStars: StarCatalogEntry[] = sortBy(
-    (star: StarCatalogEntry) => star[orderBy],
-    starsToDisplay,
-  );
+  const sortedStars = sortBy((star) => star[orderBy], starsToDisplay);
   if (orderDesc) sortedStars.reverse();
 
   function onChangeOrder(column: keyof StarCatalogEntry) {
@@ -37,9 +34,23 @@ function StarsTable({ stars }: StarsTableProps) {
     <>
       <TypeStatistics
         onTypeClick={(normalizedVarType) => {
-          // Set filter to display only a single normalizedVarType
-          setFilters({ normalizedVarTypes: [normalizedVarType] });
+          setFilters((prevFilters) => {
+            if (prevFilters.normalizedVarTypes.includes(normalizedVarType)) {
+              return {
+                normalizedVarTypes: prevFilters.normalizedVarTypes.filter(
+                  (t) => t !== normalizedVarType,
+                ),
+              };
+            }
+            return {
+              normalizedVarTypes: [
+                ...prevFilters.normalizedVarTypes,
+                normalizedVarType,
+              ],
+            };
+          });
         }}
+        selectedTypes={filters.normalizedVarTypes}
       />
       <table className="table-fixed w-full">
         <thead className="text-left">
@@ -56,7 +67,7 @@ function StarsTable({ stars }: StarsTableProps) {
         </thead>
         <tbody>
           {sortedStars.map((star) => (
-            <tr key={star.id}>
+            <tr key={star.id} className="hover:bg-gray-100">
               <td>{star.starName}</td>
               <td>{star.ra.toFixed(4)}</td>
               <td>{star.dec.toFixed(4)}</td>
