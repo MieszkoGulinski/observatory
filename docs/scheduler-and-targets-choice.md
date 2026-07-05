@@ -62,3 +62,13 @@ Dark calibration frames are taken with no light coming into the camera, so they 
 While in theory dark frames could be taken at any time, it's safer to take them during night, to reduce possible interference from stray light.
 
 Bias frames are also taken with no light coming into the camera, but they are taken with exposure time set to minimal possible value. Conditions should be exactly the same as during the exposure of dark frames. Bias frames are indicated by `expTimeMs` equal to 0 in the observation schedule. Even with that, exposure will take several seconds, as each frame needs to be downloaded from the camera buffer to the computer's disk.
+
+Dark calibration frames at various exposure times can be taken by providing multiple exposure times in the `observations_schedule` table. As each schedule item has identical coordinates, the exposures will be taken one after another without movement of the telescope other than standard tracking movement.
+
+Example `expTimeMs` value in `observations_schedule` for dark frames:
+
+```
+0,1000,0,2000,0,5000,0,10000,0,20000,0,30000,0,45000,0,60000
+```
+
+This will take dark frames with exposure times 1 s, 2 s, ... interleaved with bias frames. Then, set `startDate` and `endDate` to cover the entire night. The camera will keep taking images with the provided exposure times in a loop until `endDate` is reached.

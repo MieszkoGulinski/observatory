@@ -9,6 +9,7 @@ import type MountController from "../mountController/index.ts";
 import db from "../../db/index.ts";
 import getLHA from "../../calculations/getLHA.ts";
 import config from "../../config.ts";
+import executeSingleExposure from "./executeSingleExposure.ts";
 
 /**
  * Executes a single observation task, creating multiple exposures if needed, as long as the conditions are suitable for observation.
@@ -24,6 +25,11 @@ export default async function executeObservation(
     const lha = getLHA(new Date(), config.longitude, task.ra);
     await mountControllerClient.sendGotoCommand(lha, task.dec);
 
+    const expTimes = task.expTimeMs
+      .split(",")
+      .map((expTime) => Number(expTime.trim()));
+    let expTimeIndex = 0;
+
     while (task.endDate < Date.now()) {
       if (
         !mountControllerClient.lastSensorState ||
@@ -35,25 +41,20 @@ export default async function executeObservation(
 
       const startTimestamp = Date.now();
 
-      // TODO take a picture using gphoto2 bulb mode, and download it to the disk
-      // See http://www.gphoto.org/doc/remote/ for CLI documentation
-
-      // Simulate taking exposures, adding 1 second for mount movement and other overhead
-      await new Promise((resolve) =>
-        setTimeout(resolve, 2000 + task.expTimeMs),
+      const { fileUuid, fileHash } = await executeSingleExposure(
+        expTimes[expTimeIndex],
+        task.expIso,
       );
 
-      // expTimeMs equal to 0 has a special meaning, it indicates that it's a bias frame to be taken
-      // at minimal exposure time possible, and instead of using a bulb mode, gphoto2 should use
-      // the standard exposure mode.
+      expTimeIndex = (expTimeIndex + 1) % expTimes.length;
 
       db.insert(exposure).values({
         observationId: task.id,
         startTimestamp,
         endTimestamp: Date.now(),
 
-        fileName: "PLACEHOLDER", // this should be uuid
-        fileHash: "PLACEHOLDER", // sha256 hash of the file
+        fileUuid,
+        fileHash,
 
         cameraTemperature:
           mountControllerClient.lastSensorState?.cameraTemperature,

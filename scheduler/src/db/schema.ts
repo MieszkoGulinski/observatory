@@ -40,7 +40,22 @@ export const observationsSchedule = sqliteTable("observations_schedule", {
 
   ra: real().notNull(), // Right Ascension, decimal degrees (0 ... 360)
   dec: real().notNull(), // Declination, decimal degrees (-90 ... 90)
-  expTimeMs: integer().notNull(), // exposure time in milliseconds
+
+  expTimeMs: text().notNull(), // exposure time(s) in milliseconds, divided by commas if needed
+
+  // Exposure time should be usually a single integer written as text, but stars with high dynamic range
+  // will require multiple exposure times to be taken. In such cases, exposure times should be separated by commas.
+  // Example: "60000,5000" (1 min, 5 s)
+
+  // It's also possible to use this mechanism to take dark frames with varying exposure times,
+  // e.g various times from 1 s to several minutes. As each exposure will have its temperature recorded,
+  // it will be possible to calculate dependency between dark signal level, temperature and exposure time.
+
+  // Timeframe between startDate and endDate must include time to set the telescope to the correct position,
+  // take multiple exposures and download images from the camera.
+  // If expTimeMs == 0, it means that it's a bias frame to be taken at minimal exposure time possible.
+  // Exposure time must be calculated based on the star's magnitude.
+
   expIso: integer().notNull(), // exposure ISO
   // Note that shutter aperture and focusing cannot be controlled remotely, and must be set manually.
 });
@@ -63,8 +78,8 @@ export const exposure = sqliteTable("exposure", {
   startTimestamp: integer().notNull(), // UNIX timestamp in ms
   endTimestamp: integer().notNull(), // UNIX timestamp in ms
 
-  fileName: text(), // filled after file is created
-  fileHash: text(), // sha256 hash of the file
+  fileUuid: text().notNull(), // uuid of the file in storage (not including file extension)
+  fileHash: text().notNull(), // sha256 hash of the file
 
   // Actual values recorded during exposure
   cameraTemperature: real(), // Celsius
