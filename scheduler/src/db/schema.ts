@@ -24,12 +24,13 @@ export const updateStarCatalogSchema = createUpdateSchema(starCatalog);
 export const observationsSchedule = sqliteTable("observations_schedule", {
   id: integer().primaryKey(),
   label: text().notNull().default(""), // human readable label, usually star name copied from catalog
-  note: text().notNull().default(""), // user's private note
+  note: text().notNull().default(""), // additional note
 
-  // Target star, may be empty for calibration / test frames
-  // Note that ra/dec below are centers of the field of view,
+  // Target star may be null, particularly for calibration / test frames.
+  // Note that RA/Dev below are centers of the field of view,
   // not the star's position, as the telescope may be pointed to a field
-  // containing the target star at a non-central position.
+  // containing the target star at a non-central position, to observe
+  // reference stars too.
   targetStarId: integer().references(() => starCatalog.id, {
     onDelete: "set null",
     onUpdate: "cascade",
@@ -82,24 +83,24 @@ export const exposure = sqliteTable("exposure", {
   fileHash: text().notNull(), // sha256 hash of the file
 
   // Actual values recorded during exposure
-  cameraTemperature: real(), // Celsius
-  airTemperature: real(), // Celsius
-  humidity: real(), // percent
-  skyTemperature: real(), // Celsius (from thermal camera attached to the telescope)
+  cameraTemperature: real().notNull(), // Celsius
+  airTemperature: real().notNull(), // Celsius
+  humidity: real().notNull(), // percent
+  skyTemperature: real().notNull(), // Celsius (from thermal camera attached to the telescope)
 });
 
 export type ExposureItem = typeof exposure.$inferSelect;
 
-// Statistics
+// System and sensor readouts
 export const statistics = sqliteTable("statistics", {
   id: integer().primaryKey(),
   timestamp: integer().notNull(), // UNIX timestamp in ms
 
   // Sensor values
-  cameraTemperature: real(), // Celsius
-  airTemperature: real(), // Celsius
-  humidity: real(), // percent
-  batteryVoltage: real(), // V
+  cameraTemperature: real().notNull(), // Celsius
+  airTemperature: real().notNull(), // Celsius
+  humidity: real().notNull(), // percent
+  batteryVoltage: real().notNull(), // V
 
   // OS statistics
   uptime: integer().notNull(), // seconds

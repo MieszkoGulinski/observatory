@@ -57,10 +57,10 @@ export default async function executeObservation(
         fileHash,
 
         cameraTemperature:
-          mountControllerClient.lastSensorState?.cameraTemperature,
-        airTemperature: mountControllerClient.lastSensorState?.airTemperature,
-        humidity: mountControllerClient.lastSensorState?.humidity,
-        skyTemperature: mountControllerClient.lastSensorState?.skyTemperature,
+          mountControllerClient.lastSensorState.cameraTemperature,
+        airTemperature: mountControllerClient.lastSensorState.airTemperature,
+        humidity: mountControllerClient.lastSensorState.humidity,
+        skyTemperature: mountControllerClient.lastSensorState.skyTemperature,
       });
 
       logger.info("Completed an exposure for observation %d", task.id);
