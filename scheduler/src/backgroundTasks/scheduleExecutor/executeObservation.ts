@@ -21,8 +21,6 @@ export default async function executeObservation(
   try {
     logger.info("Starting observation %d", task.id);
 
-    // TODO take a picture using gphoto2 and download it to the disk
-
     const lha = getLHA(new Date(), config.longitude, task.ra);
     await mountControllerClient.sendGotoCommand(lha, task.dec);
 
@@ -36,16 +34,26 @@ export default async function executeObservation(
       logger.info("Taking an exposure for observation %d", task.id);
 
       const startTimestamp = Date.now();
-      // Simulate taking exposures
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // TODO take a picture using gphoto2 bulb mode, and download it to the disk
+      // See http://www.gphoto.org/doc/remote/ for CLI documentation
+
+      // Simulate taking exposures, adding 1 second for mount movement and other overhead
+      await new Promise((resolve) =>
+        setTimeout(resolve, 2000 + task.expTimeMs),
+      );
+
+      // expTimeMs equal to 0 has a special meaning, it indicates that it's a bias frame to be taken
+      // at minimal exposure time possible, and instead of using a bulb mode, gphoto2 should use
+      // the standard exposure mode.
 
       db.insert(exposure).values({
         observationId: task.id,
         startTimestamp,
         endTimestamp: Date.now(),
 
-        fileName: "PLACEHOLDER",
-        fileHash: "PLACEHOLDER",
+        fileName: "PLACEHOLDER", // this should be uuid
+        fileHash: "PLACEHOLDER", // sha256 hash of the file
 
         cameraTemperature:
           mountControllerClient.lastSensorState?.cameraTemperature,

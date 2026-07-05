@@ -9,6 +9,7 @@ type TableHeaderProps = {
 
 type TableHeaderCellProps = {
   name: string;
+  tooltip?: string;
   column: keyof StarCatalogEntry;
   onChangeOrder?: (column: keyof StarCatalogEntry) => void;
   orderBy: keyof StarCatalogEntry;
@@ -21,10 +22,12 @@ function TableHeaderCell({
   onChangeOrder,
   orderBy,
   orderDesc,
+  tooltip,
 }: TableHeaderCellProps) {
   return (
     <th
-      onClick={() => onChangeOrder(column)}
+      title={tooltip}
+      onClick={() => onChangeOrder?.(column)}
       className={onChangeOrder ? "hover:bg-gray-100 cursor-pointer" : undefined}
     >
       <div className="flex items-center gap-2 min-h-[22px]">
@@ -50,6 +53,7 @@ function TableHeader({ onChangeOrder, orderBy, orderDesc }: TableHeaderProps) {
         <TableHeaderCell
           name="RA"
           column="ra"
+          tooltip="Right ascension"
           onChangeOrder={onChangeOrder}
           orderBy={orderBy}
           orderDesc={orderDesc}
@@ -57,6 +61,7 @@ function TableHeader({ onChangeOrder, orderBy, orderDesc }: TableHeaderProps) {
         <TableHeaderCell
           name="Dec"
           column="dec"
+          tooltip="Declination"
           onChangeOrder={onChangeOrder}
           orderBy={orderBy}
           orderDesc={orderDesc}

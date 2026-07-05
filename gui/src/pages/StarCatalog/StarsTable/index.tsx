@@ -1,6 +1,6 @@
 import type { StarCatalogEntry, StarCatalogFilters } from "../types";
 import TypeStatistics from "./TypeStatistics";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { sortBy } from "ramda";
 import TableHeader from "./TableHeader";
 
@@ -17,11 +17,15 @@ function StarsTable({ stars }: StarsTableProps) {
   const [orderBy, setOrderBy] = useState<keyof StarCatalogEntry>("starName");
   const [orderDesc, setOrderDesc] = useState<boolean>(false);
 
-  const starsToDisplay = stars.filter((star) => {
-    // Add more filters here
-    if (filters.normalizedVarTypes.length === 0) return true;
-    return filters.normalizedVarTypes.includes(star.normalizedVarType);
-  });
+  const starsToDisplay = useMemo(
+    () =>
+      stars.filter((star) => {
+        // Add more filters here
+        if (filters.normalizedVarTypes.length === 0) return true;
+        return filters.normalizedVarTypes.includes(star.normalizedVarType);
+      }),
+    [stars, filters],
+  );
 
   const sortedStars = sortBy(
     (star) => star[orderBy] as number | string, // TypeScript wouldn't accept null
@@ -29,31 +33,33 @@ function StarsTable({ stars }: StarsTableProps) {
   );
   if (orderDesc) sortedStars.reverse();
 
-  function onChangeOrder(column: keyof StarCatalogEntry) {
+  const onChangeOrder = useCallback((column: keyof StarCatalogEntry) => {
     setOrderBy(column);
-    setOrderDesc(!orderDesc);
-  }
+    setOrderDesc((prev) => !prev);
+  }, []);
+
+  const onToggleNormalizedVarType = useCallback((normalizedVarType: string) => {
+    setFilters((prevFilters) => {
+      if (prevFilters.normalizedVarTypes.includes(normalizedVarType)) {
+        return {
+          normalizedVarTypes: prevFilters.normalizedVarTypes.filter(
+            (t) => t !== normalizedVarType,
+          ),
+        };
+      }
+      return {
+        normalizedVarTypes: [
+          ...prevFilters.normalizedVarTypes,
+          normalizedVarType,
+        ],
+      };
+    });
+  }, []);
 
   return (
     <>
       <TypeStatistics
-        onTypeClick={(normalizedVarType) => {
-          setFilters((prevFilters) => {
-            if (prevFilters.normalizedVarTypes.includes(normalizedVarType)) {
-              return {
-                normalizedVarTypes: prevFilters.normalizedVarTypes.filter(
-                  (t) => t !== normalizedVarType,
-                ),
-              };
-            }
-            return {
-              normalizedVarTypes: [
-                ...prevFilters.normalizedVarTypes,
-                normalizedVarType,
-              ],
-            };
-          });
-        }}
+        onTypeClick={onToggleNormalizedVarType}
         selectedTypes={filters.normalizedVarTypes}
       />
       <table className="table-fixed w-full">
