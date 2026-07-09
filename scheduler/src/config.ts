@@ -11,6 +11,9 @@ export type Config = {
   latitude: number;
   longitude: number;
 
+  // UTC offset for the start of the night (e.g. 2 for CEST)
+  nightStartUtcOffset: number;
+
   // Import filters
   maxDeclination?: number; // maximum declination of stars that can be observed
   minDeclination?: number; // minimum declination of stars that can be observed
@@ -27,6 +30,10 @@ const config: Config = {
   httpPort: parseInt(process.env.HTTP_PORT as string, 10),
   latitude: parseFloat(process.env.LATITUDE as string),
   longitude: parseFloat(process.env.LONGITUDE as string),
+  nightStartUtcOffset: parseInt(
+    process.env.NIGHT_START_UTC_OFFSET as string,
+    10,
+  ),
   maxDeclination: process.env.IMPORT_MAX_DECLINATION
     ? parseFloat(process.env.IMPORT_MAX_DECLINATION as string)
     : undefined,
