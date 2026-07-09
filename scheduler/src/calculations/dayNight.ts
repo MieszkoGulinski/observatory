@@ -7,6 +7,11 @@ type SunriseSunsetTimes = { sunrise: Date | null; sunset: Date | null };
 const cache = new Map<string, SunriseSunsetTimes>();
 
 export function getSunriseSunsetTimesByDay(day: Date): SunriseSunsetTimes {
+  // TODO: check resistance to time zones - library generates times for the day in local time
+  // e.g. given timestamp at 0:30 at July 10 in CEST, equal to 22:30 at July 9 in UTC, will
+  // generate sunrise/sunset for July 10.
+
+  // This will generate dayStr assuming local time, e.g. 2026-05-03T23:30:00.000Z will be converted to 2026-05-04
   const dayStr = dayjs(day).format("YYYY-MM-DD");
   if (!cache.has(dayStr)) {
     cache.set(dayStr, {
