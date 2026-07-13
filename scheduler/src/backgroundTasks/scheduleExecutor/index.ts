@@ -5,7 +5,7 @@ import db from "../../db/index.ts";
 import { observationsSchedule } from "../../db/schema.ts";
 import { and, gt, lte } from "drizzle-orm";
 import executeObservation from "./executeObservation.ts";
-import { isDayNight } from "../../calculations/dayNight.ts";
+import { isDaylight } from "../../calculations/dayNight.ts";
 
 const POLLING_INTERVAL = 5000; // 5 s
 
@@ -34,14 +34,14 @@ class ScheduleExecutor {
 
         // Note that if the microcontroller detects unsuitable conditions, it will close the roof independently of these commands.
 
-        const { isDay, isNight } = isDayNight();
+        const isDay = isDaylight();
         const { roofState, conditionsSuitableForObservation } =
           this.mountControllerClient.lastSensorState;
 
         if (
           roofState === "CLOSED" &&
           conditionsSuitableForObservation &&
-          isNight
+          !isDay
         ) {
           await this.mountControllerClient.sendOpenCommand();
           continue;

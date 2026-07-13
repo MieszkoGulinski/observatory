@@ -15,6 +15,9 @@ export type Config = {
   latitude: number;
   longitude: number;
 
+  // Time zone for the scheduler
+  schedulerTimeZone: string;
+
   // Import filters
   maxDeclination?: number; // maximum declination of stars that can be observed
   minDeclination?: number; // minimum declination of stars that can be observed

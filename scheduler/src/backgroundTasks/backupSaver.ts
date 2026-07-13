@@ -1,5 +1,5 @@
 import { createBackup } from "../db/index.ts";
-import { isDayNight } from "../calculations/dayNight.ts";
+import { isDaylight } from "../calculations/dayNight.ts";
 import logger from "../logger.ts";
 
 const BACKUP_POLL_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
@@ -15,7 +15,7 @@ class BackupSaver {
   }
 
   private async createBackupIfNeeded() {
-    const { isDay } = isDayNight();
+    const isDay = isDaylight();
     if (isDay && !this.prevIsDay) {
       try {
         logger.info("Creating backup");
