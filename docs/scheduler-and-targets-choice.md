@@ -49,7 +49,7 @@ The modification to the algorithm described above is that in the first step, we 
 
 ## Algorithm including eclipsing variables
 
-Eclipsing variables need to be observed continuously to precisely catch the eclipse moment, so they should be scheduled in blocks of time, rather than as single observations.
+Eclipsing variables need to be observed continuously to precisely catch the eclipse moment, so they should be scheduled in blocks of time containing sequential exposures, rather than as single observations.
 
 ## Insertion of flat calibration frames
 

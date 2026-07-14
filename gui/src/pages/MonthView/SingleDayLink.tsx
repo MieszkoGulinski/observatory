@@ -37,6 +37,10 @@ function SingleDayLink({ day }: SingleDayLinkProps) {
     cssClass = "font-semibold";
   }
 
+  // Possibly in the future, add:
+  // - How many observations were done this night
+  // - Colorful bar showing the Sun altitude below (or above) horizon
+
   return (
     <tr className={cn(cssClass, "hover:bg-muted cursor-pointer")}>
       <td>
