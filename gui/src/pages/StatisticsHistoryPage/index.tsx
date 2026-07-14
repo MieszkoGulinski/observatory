@@ -7,6 +7,7 @@ import { type StatisticsRowFromServer } from "./types";
 import StatisticsChart from "./StatisticsChart";
 import ApiErrorMessage from "@/components/ApiErrorMessage";
 import SpinnerLine from "@/components/SpinnerLine";
+import Layout from "@/Layout";
 
 function StatisticsHistoryPage() {
   const [searchStartTime, setSearchStartTime] = useState<number>(() =>
@@ -31,7 +32,7 @@ function StatisticsHistoryPage() {
     : null;
 
   return (
-    <>
+    <Layout>
       <Calendar
         mode="single"
         selected={new Date(searchStartTime)}
@@ -89,7 +90,7 @@ function StatisticsHistoryPage() {
           />
         </div>
       ) : null}
-    </>
+    </Layout>
   );
 }
 

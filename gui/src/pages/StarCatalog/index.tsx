@@ -4,6 +4,7 @@ import type { StarCatalogEntry } from "./types";
 import StarsTable from "./StarsTable";
 import SpinnerLine from "@/components/SpinnerLine";
 import ApiErrorMessage from "@/components/ApiErrorMessage";
+import Layout from "@/Layout";
 
 function StarCatalog() {
   // useSWRImmutable doesn't automatically refetch data
@@ -14,11 +15,11 @@ function StarCatalog() {
   } = useSWRImmutable<StarCatalogEntry[]>("/starCatalog", fetcher);
 
   return (
-    <div>
+    <Layout>
       {isLoading ? <SpinnerLine /> : null}
       {error ? <ApiErrorMessage error={error} /> : null}
       {stars ? <StarsTable stars={stars} /> : null}
-    </div>
+    </Layout>
   );
 }
 

@@ -28,7 +28,7 @@ type StatusData = {
   };
 };
 
-function StatusPage() {
+function CurrentStatusSection() {
   const { data, error, isLoading, mutate } = useSWR<StatusData>(
     "/current-status",
     fetcher,
@@ -117,4 +117,4 @@ function StatusPage() {
   );
 }
 
-export default StatusPage;
+export default CurrentStatusSection;
