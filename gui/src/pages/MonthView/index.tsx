@@ -19,6 +19,8 @@ function MonthView() {
     monthStart.add(offset, "day").format("YYYY-MM-DD"),
   );
 
+  // Idea: instead have 2 columns, one with days, one with calendar+status
+
   return (
     <Layout>
       <div className="flex justify-between">
@@ -42,12 +44,12 @@ function MonthView() {
         <thead>
           <tr>
             <th>Date</th>
-            <th>Status</th>
+            <th className="pl-2">Status</th>
           </tr>
         </thead>
         <tbody>
           {daysInSelectedMonth.map((day) => (
-            <SingleDayLink key={day} day={day} status="" />
+            <SingleDayLink key={day} day={day} />
           ))}
         </tbody>
       </table>
