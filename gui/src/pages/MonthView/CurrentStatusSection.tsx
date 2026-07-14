@@ -29,7 +29,7 @@ type StatusData = {
 };
 
 function CurrentStatusSection() {
-  const { data, error, isLoading, mutate } = useSWR<StatusData>(
+  const { data, error, isLoading } = useSWR<StatusData>(
     "/current-status",
     fetcher,
   );
@@ -38,13 +38,9 @@ function CurrentStatusSection() {
   if (isLoading || !data) return <SpinnerLine />;
 
   return (
-    <div>
-      <table className="stats-table">
+    <div className="flex gap-2 items-start">
+      <table>
         <tbody>
-          <tr className="border-b">
-            <td>Current time</td>
-            <td>{new Date(data.time).toISOString()}</td>
-          </tr>
           <tr>
             <td>Roof state</td>
             <td>{data.controllerState?.roofState}</td>
@@ -61,10 +57,14 @@ function CurrentStatusSection() {
             <td>Declination [deg]</td>
             <td>{data.controllerState?.dec}</td>
           </tr>
-          <tr className="border-b">
+          <tr>
             <td>Local Hour Angle [deg]</td>
             <td>{data.controllerState?.lha}</td>
           </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
           <tr>
             <td>Camera temperature [C]</td>
             <td>{data.controllerState?.cameraTemperature}</td>
@@ -77,25 +77,30 @@ function CurrentStatusSection() {
             <td>Humidity [%]</td>
             <td>{data.controllerState?.humidity}</td>
           </tr>
-          <tr className="border-b">
+          <tr>
             <td>Battery voltage [V]</td>
             <td>{data.controllerState?.batteryVoltage}</td>
           </tr>
           <tr>
             <td>Uptime [s]</td>
-            <td>{data.osStats.uptime}</td>
+            <td>{data.osStats.uptime.toFixed(0)}</td>
           </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
           <tr>
-            <td>Free/Total memory [MiB]</td>
+            <td>Free memory [%]</td>
             <td>
-              {(data.osStats.freeMemory / 1024 / 1024).toFixed(2)} /{" "}
-              {(data.osStats.totalMemory / 1024 / 1024).toFixed(2)} (
               {(
                 (data.osStats.freeMemory / data.osStats.totalMemory) *
                 100
               ).toFixed(2)}
-              %)
             </td>
+          </tr>
+          <tr>
+            <td>Free memory [MiB]</td>
+            <td>{(data.osStats.freeMemory / 1024 / 1024).toFixed(2)}</td>
           </tr>
           <tr>
             <td>1 min load</td>
@@ -111,8 +116,6 @@ function CurrentStatusSection() {
           </tr>
         </tbody>
       </table>
-
-      <Button onClick={() => mutate()}>Refresh</Button>
     </div>
   );
 }
