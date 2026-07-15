@@ -1,46 +1,28 @@
 import Layout from "@/Layout";
 import useSWRImmutable from "swr/immutable";
-
 import { useConfig } from "@/config";
 import { useParams } from "react-router";
-import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 import { fetcher } from "@/utils";
 import type { ScheduleEntry } from "./types";
 import SpinnerLine from "@/components/SpinnerLine";
 import ApiErrorMessage from "@/components/ApiErrorMessage";
-
-dayjs.extend(timezone);
-dayjs.extend(utc);
+import getNightStartEndStatus from "@/calculations/getNightStartEndStatus";
 
 function NightView() {
   const { date } = useParams<{ date: string }>();
   const { schedulerTimeZone } = useConfig();
 
-  const startTimestamp = dayjs(date)
-    .tz(schedulerTimeZone)
-    .startOf("day")
-    .add(12, "hour");
-  const endTimestamp = dayjs(startTimestamp)
-    .tz(schedulerTimeZone)
-    .add(1, "day");
-
-  let status: string;
-  if (Date.now() < startTimestamp.valueOf()) {
-    status = "Upcoming";
-  } else if (Date.now() > endTimestamp.valueOf()) {
-    status = "Past";
-  } else {
-    status = "Active";
-  }
+  const [startTimestamp, endTimestamp, status] = getNightStartEndStatus(
+    date!,
+    schedulerTimeZone,
+  );
 
   const {
     data: stars,
     isLoading,
     error,
   } = useSWRImmutable<ScheduleEntry[]>(
-    `/schedule?start=${startTimestamp.valueOf()}&end=${endTimestamp.valueOf()}`,
+    `/schedule?start=${startTimestamp}&end=${endTimestamp}`,
     fetcher,
   );
 

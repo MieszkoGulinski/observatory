@@ -4,6 +4,9 @@ import { Link } from "react-router";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { cn } from "@/lib/utils";
+import getNightStartEndStatus, {
+  cssClassByStatus,
+} from "@/calculations/getNightStartEndStatus";
 
 dayjs.extend(timezone);
 dayjs.extend(utc);
@@ -15,34 +18,19 @@ type SingleDayLinkProps = {
 function SingleDayLink({ day }: SingleDayLinkProps) {
   const { schedulerTimeZone } = useConfig();
 
-  const startTimestamp = dayjs(day)
-    .tz(schedulerTimeZone)
-    .startOf("day")
-    .add(12, "hour");
-  const endTimestamp = dayjs(startTimestamp)
-    .tz(schedulerTimeZone)
-    .add(1, "day");
-
-  let status: string;
-  let cssClass: string;
-
-  if (Date.now() < startTimestamp.valueOf()) {
-    status = "Upcoming";
-    cssClass = "";
-  } else if (Date.now() > endTimestamp.valueOf()) {
-    status = "Past";
-    cssClass = "text-gray-500";
-  } else {
-    status = "Active";
-    cssClass = "font-semibold";
-  }
+  const [_startTimestamp, _endTimestamp, status] = getNightStartEndStatus(
+    day,
+    schedulerTimeZone,
+  );
 
   // Possibly in the future, add:
   // - How many observations were done this night
   // - Colorful bar showing the Sun altitude below (or above) horizon
 
   return (
-    <tr className={cn(cssClass, "hover:bg-muted cursor-pointer")}>
+    <tr
+      className={cn(cssClassByStatus[status], "hover:bg-muted cursor-pointer")}
+    >
       <td>
         <Link to={`/night/${day}`}>{day}</Link>
       </td>
