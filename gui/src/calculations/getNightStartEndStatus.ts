@@ -12,16 +12,15 @@ function getNightStartEndStatus(
   timeZone: string,
   now?: Date,
 ): [number, number, NightStatus] {
-  const startTimestamp = dayjs(dayStr)
-    .tz(timeZone)
-    .startOf("day")
-    .add(12, "hour")
-    .valueOf();
+  // there was no other way to properly handle daylight saving time transition
+  const start = dayjs.tz(dayStr + "T12:00:00", timeZone);
+  const end = dayjs.tz(
+    start.add(1, "day").format("YYYY-MM-DD") + "T12:00:00",
+    timeZone,
+  );
 
-  const endTimestamp = dayjs(startTimestamp)
-    .tz(timeZone)
-    .add(1, "day")
-    .valueOf();
+  const startTimestamp = start.valueOf();
+  const endTimestamp = end.valueOf();
 
   if (!now) {
     now = new Date();

@@ -9,7 +9,8 @@
     "tsc": "tsc -b --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "http-server dist -p 5173"
+    "start": "http-server dist -p 5173",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -48,6 +49,7 @@
     "globals": "^17.6.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "vitest": "^4.1.10"
   }
 }
