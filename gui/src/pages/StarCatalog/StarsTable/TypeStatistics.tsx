@@ -9,7 +9,6 @@ import {
 import { fetcher } from "@/utils";
 import useSWRImmutable from "swr/immutable";
 import normalizedVarTypeDescriptions from "./normalizedVarTypeDescriptions";
-import { cn } from "@/lib/utils";
 
 type VarTypeCount = {
   normalizedVarType: string;
@@ -18,10 +17,15 @@ type VarTypeCount = {
 
 type TypeStatisticsProps = {
   onTypeClick?: (normalizedVarType: string) => void;
+  onDeselectAll?: () => void;
   selectedTypes: string[];
 };
 
-function TypeStatistics({ onTypeClick, selectedTypes }: TypeStatisticsProps) {
+function TypeStatistics({
+  onTypeClick,
+  onDeselectAll,
+  selectedTypes,
+}: TypeStatisticsProps) {
   const {
     data: varTypes,
     isLoading,
@@ -33,17 +37,18 @@ function TypeStatistics({ onTypeClick, selectedTypes }: TypeStatisticsProps) {
       <DialogTrigger asChild>
         <Button>Show types</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:min-w-xl">
         <DialogHeader>
-          <DialogTitle>Types statistics</DialogTitle>
+          <DialogTitle>Types statistics and filter</DialogTitle>
         </DialogHeader>
         {isLoading ? <>loading...</> : null}
         {error ? <>error</> : null}
         {varTypes ? (
           <div className="max-h-100 overflow-y-scroll">
             <table className="table-fixed w-full">
-              <thead className="sticky top-0 bg-white text-left">
+              <thead className="sticky top-0 bg-card text-left">
                 <tr>
+                  <th className="w-[80px]"></th>
                   <th className="w-[80px]">Type</th>
                   <th className="w-[80px]">Count</th>
                   <th>Description</th>
@@ -54,13 +59,16 @@ function TypeStatistics({ onTypeClick, selectedTypes }: TypeStatisticsProps) {
                   <tr
                     key={varType.normalizedVarType}
                     onClick={() => onTypeClick?.(varType.normalizedVarType)}
-                    className={cn(
-                      "cursor-pointer hover:bg-gray-100",
-                      selectedTypes.includes(varType.normalizedVarType)
-                        ? "bg-gray-200 hover:bg-gray-300"
-                        : "",
-                    )}
+                    className="cursor-pointer hover:bg-secondary"
                   >
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedTypes.includes(
+                          varType.normalizedVarType,
+                        )}
+                      />
+                    </td>
                     <td>{varType.normalizedVarType}</td>
                     <td>{varType.count}</td>
                     <td>
@@ -74,6 +82,9 @@ function TypeStatistics({ onTypeClick, selectedTypes }: TypeStatisticsProps) {
             </table>
           </div>
         ) : null}
+        <div className="flex justify-end">
+          <Button onClick={onDeselectAll}>Deselect all</Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

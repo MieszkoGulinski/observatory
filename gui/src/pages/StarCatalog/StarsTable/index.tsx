@@ -56,10 +56,15 @@ function StarsTable({ stars }: StarsTableProps) {
     });
   }, []);
 
+  const onDeselectAll = useCallback(() => {
+    setFilters({ normalizedVarTypes: [] });
+  }, []);
+
   return (
     <>
       <TypeStatistics
         onTypeClick={onToggleNormalizedVarType}
+        onDeselectAll={onDeselectAll}
         selectedTypes={filters.normalizedVarTypes}
       />
       <table className="table-fixed w-full">
@@ -70,7 +75,7 @@ function StarsTable({ stars }: StarsTableProps) {
         />
         <tbody>
           {sortedStars.map((star) => (
-            <tr key={star.id} className="hover:bg-gray-100">
+            <tr key={star.id} className="hover:bg-secondary">
               <td>{star.starName}</td>
               <td>{star.ra.toFixed(4)}</td>
               <td>{star.dec.toFixed(4)}</td>
