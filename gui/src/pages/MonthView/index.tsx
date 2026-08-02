@@ -19,40 +19,42 @@ function MonthView() {
     monthStart.add(offset, "day").format("YYYY-MM-DD"),
   );
 
-  // Idea: instead have 2 columns, one with days, one with calendar+status
-
   return (
     <Layout>
-      <div className="flex justify-between">
-        <Calendar
-          mode="single"
-          selected={undefined}
-          onSelect={(d) => {
-            if (!d) return;
-            // TODO check edge cases with time zones
-            const day = dayjs(d).format("YYYY-MM-DD");
-            navigate(`/night/${day}`);
-          }}
-          className="rounded-lg border"
-          month={month}
-          onMonthChange={setMonth}
-          timeZone={config.schedulerTimeZone}
-        />
-        <CurrentStatusSection />
+      <div className="flex justify-between gap-8">
+        <div>
+          <Calendar
+            mode="single"
+            selected={undefined}
+            onSelect={(d) => {
+              if (!d) return;
+              // TODO check edge cases with time zones
+              const day = dayjs(d).format("YYYY-MM-DD");
+              navigate(`/night/${day}`);
+            }}
+            className="rounded-lg border"
+            month={month}
+            onMonthChange={setMonth}
+            timeZone={config.schedulerTimeZone}
+          />
+          <CurrentStatusSection />
+        </div>
+        <div className="flex-1">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th className="pl-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {daysInSelectedMonth.map((day) => (
+                <SingleDayLink key={day} day={day} />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th className="pl-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {daysInSelectedMonth.map((day) => (
-            <SingleDayLink key={day} day={day} />
-          ))}
-        </tbody>
-      </table>
     </Layout>
   );
 }
