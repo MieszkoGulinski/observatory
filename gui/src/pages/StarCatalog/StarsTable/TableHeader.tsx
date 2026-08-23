@@ -28,7 +28,9 @@ function TableHeaderCell({
     <th
       title={tooltip}
       onClick={() => onChangeOrder?.(column)}
-      className={onChangeOrder ? "hover:bg-gray-100 cursor-pointer" : undefined}
+      className={
+        onChangeOrder ? "hover:bg-secondary cursor-pointer" : undefined
+      }
     >
       <div className="flex items-center gap-2 min-h-[22px]">
         {name}
@@ -90,12 +92,14 @@ function TableHeader({ onChangeOrder, orderBy, orderDesc }: TableHeaderProps) {
         <TableHeaderCell
           name="Type"
           column="varType"
+          tooltip="Variability type according to AAVSO VSX"
           orderBy={orderBy}
           orderDesc={orderDesc}
         />
         <TableHeaderCell
           name="Normalized Type"
           column="normalizedVarType"
+          tooltip="Types grouped into similar patterns"
           orderBy={orderBy}
           orderDesc={orderDesc}
         />

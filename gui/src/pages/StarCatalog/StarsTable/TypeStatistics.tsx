@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -64,6 +65,7 @@ function TypeStatistics({
                     <td>
                       <input
                         type="checkbox"
+                        readOnly
                         checked={selectedTypes.includes(
                           varType.normalizedVarType,
                         )}
@@ -82,8 +84,11 @@ function TypeStatistics({
             </table>
           </div>
         ) : null}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Button onClick={onDeselectAll}>Deselect all</Button>
+          <DialogClose asChild>
+            <Button>Close</Button>
+          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>

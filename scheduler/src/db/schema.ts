@@ -26,6 +26,10 @@ export const observationsSchedule = sqliteTable("observations_schedule", {
   label: text().notNull().default(""), // human readable label, usually star name copied from catalog
   note: text().notNull().default(""), // additional note
 
+  // isCalibration should be set to true for bias and dark frames, as they are taken with lens cap closed
+  // and don't need open roof or targeting, but must be false for flat frames.
+  isCalibration: integer().default(0), // 0 = false, 1 = true; not boolean because SQLite doesn't support it
+
   // Target star may be null, particularly for calibration / test frames.
   // Note that RA/Dev below are centers of the field of view,
   // not the star's position, as the telescope may be pointed to a field

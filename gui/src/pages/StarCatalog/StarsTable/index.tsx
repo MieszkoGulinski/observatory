@@ -3,6 +3,7 @@ import TypeStatistics from "./TypeStatistics";
 import { useCallback, useMemo, useState } from "react";
 import { sortBy } from "ramda";
 import TableHeader from "./TableHeader";
+import StarDetailsModal from "./StarDetailsModal";
 
 type StarsTableProps = {
   stars: StarCatalogEntry[];
@@ -16,6 +17,7 @@ function StarsTable({ stars }: StarsTableProps) {
   const [filters, setFilters] = useState<StarCatalogFilters>(defaultFilters);
   const [orderBy, setOrderBy] = useState<keyof StarCatalogEntry>("starName");
   const [orderDesc, setOrderDesc] = useState<boolean>(false);
+  const [selectedStar, setSelectedStar] = useState<number | null>(null);
 
   const starsToDisplay = useMemo(
     () =>
@@ -62,11 +64,18 @@ function StarsTable({ stars }: StarsTableProps) {
 
   return (
     <>
-      <TypeStatistics
-        onTypeClick={onToggleNormalizedVarType}
-        onDeselectAll={onDeselectAll}
-        selectedTypes={filters.normalizedVarTypes}
-      />
+      <div className="flex gap-2 items-center">
+        <TypeStatistics
+          onTypeClick={onToggleNormalizedVarType}
+          onDeselectAll={onDeselectAll}
+          selectedTypes={filters.normalizedVarTypes}
+        />
+        <div>
+          {filters.normalizedVarTypes.length > 0 ? "Selected: " : ""}
+          {filters.normalizedVarTypes.join(" ")}
+        </div>
+        <div>Total displayed: {sortedStars.length}</div>
+      </div>
       <table className="table-fixed w-full">
         <TableHeader
           onChangeOrder={onChangeOrder}
@@ -75,19 +84,33 @@ function StarsTable({ stars }: StarsTableProps) {
         />
         <tbody>
           {sortedStars.map((star) => (
-            <tr key={star.id} className="hover:bg-secondary">
+            <tr
+              key={star.id}
+              className="hover:bg-secondary"
+              onClick={() => setSelectedStar(star.id)}
+            >
               <td>{star.starName}</td>
               <td>{star.ra.toFixed(4)}</td>
               <td>{star.dec.toFixed(4)}</td>
               <td>{star.minVMag.toFixed(2)}</td>
               <td>{star.maxVMag.toFixed(2)}</td>
-              <td>{star.periodDays?.toFixed(2) ?? "N/A"}</td>
+              <td>
+                {star.periodDays?.toFixed(2) ?? (
+                  <span className="text-muted-foreground">N/A</span>
+                )}
+              </td>
               <td>{star.varType}</td>
               <td>{star.normalizedVarType}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {selectedStar !== null ? (
+        <StarDetailsModal
+          star={stars.find((star) => star.id === selectedStar)!}
+          onClose={() => setSelectedStar(null)}
+        />
+      ) : null}
     </>
   );
 }

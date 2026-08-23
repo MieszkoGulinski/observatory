@@ -4,6 +4,7 @@ export type ScheduleEntry = {
   id: number;
   label: string;
   note: string;
+  isCalibration: number;
   targetStarId: number | null;
   startDate: number;
   endDate: number;
