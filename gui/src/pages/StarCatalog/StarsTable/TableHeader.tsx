@@ -43,7 +43,7 @@ function TableHeaderCell({
 
 function TableHeader({ onChangeOrder, orderBy, orderDesc }: TableHeaderProps) {
   return (
-    <thead className="text-left">
+    <thead className="text-left sticky top-0 bg-background">
       <tr>
         <TableHeaderCell
           name="Name"

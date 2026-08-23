@@ -84,6 +84,14 @@ function TypeStatistics({
             </table>
           </div>
         ) : null}
+        <a
+          href="https://vsx.aavso.org/index.php?view=about.vartypes"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Explanations of variable star types on AAVSO VSX website
+        </a>
         <div className="flex justify-end gap-2">
           <Button onClick={onDeselectAll}>Deselect all</Button>
           <DialogClose asChild>

@@ -10,7 +10,7 @@ export default async function executeSingleExposure(
   // See http://www.gphoto.org/doc/remote/ for CLI documentation
   // Then rename the file to uuidv4, and generate sha256 hash of the file.
 
-  // Simulate taking exposures, adding 2 s for mount movement and other overhead
+  // Simulate taking exposures, adding 2 s for overhead (camera readout, data download etc.)
 
   await new Promise((resolve) => setTimeout(resolve, 2000 + expTime));
 
